@@ -39,8 +39,7 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 
 ### 3. バックエンド実装 ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))
 - [#13](https://github.com/YoshinoriSawaya/task-pm-app/issues/13) マイグレーション作成(tasksテーブル)
-- [#14](https://github.com/YoshinoriSawaya/task-pm-app/issues/14) Task CRUD API実装
-- [#15](https://github.com/YoshinoriSawaya/task-pm-app/issues/15) バックエンドユニットテスト(Pest)実装
+- [#14](https://github.com/YoshinoriSawaya/task-pm-app/issues/14) Task CRUD API実装(TDD: テスト先行。旧#15を統合、change-log.md C9)
 - [#16](https://github.com/YoshinoriSawaya/task-pm-app/issues/16) PHPStan導入・静的解析通過
 - [#44](https://github.com/YoshinoriSawaya/task-pm-app/issues/44)〜[#46](https://github.com/YoshinoriSawaya/task-pm-app/issues/46) マイグレーション追加・Bug/Progressスライス実装(change-log.md C2)
 - [#54](https://github.com/YoshinoriSawaya/task-pm-app/issues/54) デモ用シーダー作成(change-log.md C6)
