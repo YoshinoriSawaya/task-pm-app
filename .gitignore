@@ -2,5 +2,8 @@ node_modules/
 vendor/
 .env
 frontend/dist/
-backend/storage/
-backend/bootstrap/cache/
+
+# backend/storage/・backend/bootstrap/cache/ 配下は、Laravel自身が置く
+# 入れ子の.gitignore(ディレクトリ構造は残しつつ生成物だけ無視するパターン)に任せる。
+# ここでまとめて無視すると、その入れ子.gitignore自体が追跡されず
+# クローン直後にディレクトリが存在しなくなる。
