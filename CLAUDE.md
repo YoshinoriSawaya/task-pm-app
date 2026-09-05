@@ -54,17 +54,23 @@
 docs/requirements/   クライアント要求
 docs/pmbok/           プロジェクト憲章・WBS・スケジュール・リスク登録簿・変更ログ・振り返り
 docs/adr/             設計判断の記録
-docs/architecture/    ER図・レイヤー構成図
+docs/architecture/    ER図・API設計・レイヤー構成図
 frontend/             React + TypeScript(src/features配下にVertical Slice)
 backend/              Laravel(app/Features配下にVertical Slice)
 .github/workflows/    CI設定
 ```
 
-## 現在の状態(未決定事項)
+## 現在の状態
 
-- `docs/requirements/client-requirements.md`はテンプレートのみで、**スコープ(やること/やらないこと)と受け入れ基準(Definition of Done)がまだ未記入**
-- タスク管理アプリのMVP機能(タスクCRUD、ステータス管理、優先度、期限など、どこまで実装するか)が未確定
-- PMBOKの要素(WBS階層、リスク登録簿など)を「アプリ自身の機能」として実装するのか、「開発過程でPMとして使うドキュメント」に留めるのかの切り分けも未確定
-- 認証機能をスコープに含めるか(単一ユーザー前提なので不要な可能性もある)も未確定
+要件定義フェーズ・設計フェーズ(WBS上のフェーズ0・1)は完了。実装フェーズに進行中。
 
-**次のアクション**: 実装(WBSやER図などの設計)を進める前に、まず`docs/requirements/client-requirements.md`のスコープと受け入れ基準を確定させること。ここが決まらないと設計に着手できない。
+- 確定済みの要求・非機能要件: [docs/requirements/client-requirements.md](docs/requirements/client-requirements.md)
+- アーキテクチャ方針(Vertical Slice + ヘキサゴナル): [docs/adr/0001-vertical-slice-and-hexagonal-architecture.md](docs/adr/0001-vertical-slice-and-hexagonal-architecture.md)
+- テーブル設計: [docs/architecture/er-diagram.md](docs/architecture/er-diagram.md)
+- API設計: [docs/architecture/api-design.md](docs/architecture/api-design.md)
+- レイヤー構成(具体クラス): [docs/architecture/layer-diagram.md](docs/architecture/layer-diagram.md)
+- 既知のリスク・変更履歴: [docs/pmbok/risk-register.md](docs/pmbok/risk-register.md) / [docs/pmbok/change-log.md](docs/pmbok/change-log.md)
+
+WBS全体とフェーズごとの進捗は[docs/pmbok/wbs.md](docs/pmbok/wbs.md)とGitHub Issues([YoshinoriSawaya/task-pm-app](https://github.com/YoshinoriSawaya/task-pm-app/issues))が正(生きた情報源)。決定事項の詳細をこのファイルに複製しない — 進捗が変わるたびにここを更新すると、内容が分裂して陳腐化するため、要約とリンクのみを置く方針とする。
+
+**次のアクション**: WBSフェーズ2「環境構築確認」(Issue #12)から着手する。
