@@ -89,6 +89,9 @@
 - `backend/.env.example`にはDB接続情報(docker-compose.ymlの値と一致させる)と、本番デプロイ時のみ使うインフラ層Basic認証用の`BASIC_AUTH_USER`/`BASIC_AUTH_PASSWORD`(値は空でコミットし、デプロイ時に実値を設定)を含める
 - `frontend/.env.example`には`VITE_API_BASE_URL`を含める
 
+## ローカル開発環境(このマシン固有のメモ)
+このマシンのシステムPHPはXAMPP付属の8.0.3で古く、Laravel(要件: PHP 8.3)を直接動かせない。`C:\Users\PC_User\tools\php83`にPHP 8.3.33を展開し、ユーザーPATHに優先登録済み(管理者権限不要、[change-log.md](../pmbok/change-log.md) C8)。新しいターミナル/セッションでは`php`コマンドがそのままPHP 8.3系を指す。既存のシェルセッションでは反映されないため、必要なら`export PATH="$USERPROFILE/tools/php83:$PATH"`するか、フルパスで呼び出す。
+
 ## CI(GitHub Actions)
 - トリガーは**`push`(mainブランチ)**。本プロジェクトはPRフローを取らないため、`pull_request`トリガーでは静的解析・テストが一度も実行されない。かつてワークフロー初期スキャフォールドが`pull_request`トリガーのままになっていたため、Git規約(下記)確定時に`push`へ修正した([change-log.md](../pmbok/change-log.md) C5)
 - `backend-ci.yml`: Pint(フォーマットチェック、`--test`)→ PHPStan(静的解析)→ Pest(テスト)の順に実行
