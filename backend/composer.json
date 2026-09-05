@@ -45,7 +45,7 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "dev": "php artisan serve --host=0.0.0.0 --port=8000",
-        "stan": "vendor/bin/phpstan analyse",
+        "stan": "vendor/bin/phpstan analyse --memory-limit=512M",
         "test": "vendor/bin/pest"
     },
     "extra": {

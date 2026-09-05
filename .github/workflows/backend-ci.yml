@@ -41,5 +41,5 @@ jobs:
       - run: composer install
       - run: cp .env.example .env && php artisan key:generate
       - run: vendor/bin/pint --test
-      - run: vendor/bin/phpstan analyse
+      - run: vendor/bin/phpstan analyse --memory-limit=512M
       - run: vendor/bin/pest
