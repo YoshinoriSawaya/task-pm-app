@@ -40,7 +40,7 @@
 
 - 設計判断は`docs/adr/`にADR(Architecture Decision Record)として記録する。1判断につき1ファイル、Context/Decision/Alternatives Considered/Consequencesの形式
 - リファクタリングの工数を意図的に確保し、Before(密結合)→After(SOLID)の設計比較を残す(コードそのものより、クラス図やスライド等の「見せられる形」を重視)
-- 静的解析を導入する(バックエンド: PHPStan、フロントエンド: ESLint strict + TypeScript strict)
+- 静的解析を導入する(バックエンド: PHPStan、フロントエンド: ESLint strict + TypeScript strict)。具体的な規約・命名規則・厳格度は[docs/development/coding-standards.md](docs/development/coding-standards.md)を参照
 - コミットは1コミット1意図を意識する
 
 ## PMBOK成果物の置き場所(`docs/pmbok/`)
@@ -56,6 +56,7 @@ docs/requirements/   クライアント要求
 docs/pmbok/           プロジェクト憲章・WBS・スケジュール・リスク登録簿・変更ログ・振り返り
 docs/adr/             設計判断の記録
 docs/architecture/    ER図・API設計・レイヤー構成図
+docs/development/     コーディング規約
 frontend/             React + TypeScript(src/features配下にVertical Slice)
 backend/              Laravel(app/Features配下にVertical Slice)
 .github/workflows/    CI設定
@@ -70,4 +71,5 @@ backend/              Laravel(app/Features配下にVertical Slice)
 - 確定した要求・非機能要件: `docs/requirements/client-requirements.md`
 - 確定した設計判断: `docs/adr/`配下のADR一覧(番号順。最新の番号が最新の決定)
 - テーブル設計・API設計・レイヤー構成: `docs/architecture/`配下
+- コーディング規約: `docs/development/coding-standards.md`
 - 既知のリスク・変更履歴・振り返り: `docs/pmbok/risk-register.md` / `change-log.md` / `retrospective.md`
