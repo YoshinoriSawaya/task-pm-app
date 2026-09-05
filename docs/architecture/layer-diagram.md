@@ -100,8 +100,17 @@ ADR-0001の通り、バックエンドほど厳密な多層化はせず3層に�
 
 `types/task.ts`にAPIレスポンス([API設計](api-design.md)のTaskリソース)と対応する`Task`・`TaskStatus`・`TaskPriority`型を定義し、components/hooks/api間で共有する。
 
+## フロントエンド: `frontend/src/features/bug/`・`frontend/src/features/progress/`
+
+Taskスライスと同じ3層構成(components/hooks/api)を、それぞれ独立したディレクトリとして持つ。
+
+| スライス | 主なファイル |
+|---|---|
+| `bug/` | `components/BugList.tsx`・`BugForm.tsx`、`hooks/useBugs.ts`・`useCreateBug.ts`・`useUpdateBug.ts`・`useDeleteBug.ts`、`api/bugApiClient.ts`、`types/bug.ts` |
+| `progress/` | `components/ProgressDashboard.tsx`(EVM指標・バグ検知度の表示)、`hooks/useProgress.ts`、`api/progressApiClient.ts`、`types/progress.ts` |
+
 ## フォローアップ
 
 - 本構成に基づき、バックエンド実装([#13](https://github.com/YoshinoriSawaya/task-pm-app/issues/13)〜[#16](https://github.com/YoshinoriSawaya/task-pm-app/issues/16))・フロントエンド実装([#18](https://github.com/YoshinoriSawaya/task-pm-app/issues/18)〜[#21](https://github.com/YoshinoriSawaya/task-pm-app/issues/21))を進める
-- Bug/Progressスライスの実装Issueをバックエンド実装フェーズ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))に追加する
+- Bug/Progressスライスのバックエンド実装は[#44](https://github.com/YoshinoriSawaya/task-pm-app/issues/44)〜[#46](https://github.com/YoshinoriSawaya/task-pm-app/issues/46)、フロントエンド実装は[#47](https://github.com/YoshinoriSawaya/task-pm-app/issues/47)〜[#49](https://github.com/YoshinoriSawaya/task-pm-app/issues/49)で管理する
 - リファクタリングフェーズ([#26](https://github.com/YoshinoriSawaya/task-pm-app/issues/26)〜[#28](https://github.com/YoshinoriSawaya/task-pm-app/issues/28))では、この構成に反する「Before(密結合)」実装(例: Controllerから直接Eloquentモデルを操作する等)をあえて作り、After(本構成)へのリファクタリングとして比較する

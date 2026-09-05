@@ -43,6 +43,8 @@
   "priority": "high",
   "due_date": "2026-09-05",
   "definition_of_done": "client-requirements.mdが確定していること",
+  "estimated_effort": 4.0,
+  "actual_effort": 3.5,
   "created_at": "2026-09-05T02:00:00Z",
   "updated_at": "2026-09-05T03:00:00Z",
   "subtasks": []
@@ -82,7 +84,9 @@
 | `priority` | string, nullable | 任意(省略時`medium`) | `high`\|`medium`\|`low` |
 | `due_date` | date, nullable | 任意 | `YYYY-MM-DD` |
 | `definition_of_done` | string, nullable | 任意 | |
+| `estimated_effort` | number, nullable | 任意 | 0以上、小数第2位まで(時間単位) |
 
+- `actual_effort`は作成時には受け付けない(常に`null`から開始し、作業実施後にPATCHで記録する想定)
 - レスポンス: `201 Created`(作成されたTaskリソース)
 - バリデーションエラー: `422 Unprocessable Entity`(Laravel標準形式 `{"message": "...", "errors": {...}}`)。2階層制約違反時は`parent_task_id`に対するエラーとして返す
 
@@ -98,6 +102,8 @@
 | `priority` | string | `high`\|`medium`\|`low` |
 | `due_date` | date, nullable | `YYYY-MM-DD` |
 | `definition_of_done` | string, nullable | |
+| `estimated_effort` | number, nullable | 0以上、小数第2位まで(時間単位) |
+| `actual_effort` | number, nullable | 0以上、小数第2位まで(時間単位)。作業完了時等に記録する |
 
 `parent_task_id`は受け付けない(送られても無視、または`422`で拒否。実装時にどちらにするかは[#14](https://github.com/YoshinoriSawaya/task-pm-app/issues/14)で決定)。
 

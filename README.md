@@ -17,7 +17,7 @@
 docs/requirements/   クライアント要求
 docs/pmbok/           プロジェクト憲章・WBS・スケジュール・リスク登録簿・変更ログ・振り返り
 docs/adr/             設計判断の記録(Architecture Decision Record)
-docs/architecture/    ER図・レイヤー構成図
+docs/architecture/    ER図・API設計・レイヤー構成図
 frontend/             React + TypeScript
 backend/              Laravel(app/Features配下にVertical Slice)
 .github/workflows/    CI設定

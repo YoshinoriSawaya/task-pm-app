@@ -46,7 +46,8 @@
 ## PMBOK成果物の置き場所(`docs/pmbok/`)
 
 - `project-charter.md` / `wbs.md` / `schedule.md` / `risk-register.md` / `change-log.md` / `retrospective.md`
-- これらは「開発過程でPM役として作成するドキュメント」であり、アプリ自体の機能として実装するかどうかは別途スコープ判断が必要(下記「現在の状態」を参照)
+- 基本方針は「開発過程でPM役として作成するドキュメント」であり、アプリ自体の機能にはしない。ただし進捗指標(EVM風メトリクス)・バグ管理は例外的にアプリ機能としても実装する([ADR-0002](docs/adr/0002-evm-progress-and-bug-tracking.md))。何をアプリ機能にするかの区分は[client-requirements.md](docs/requirements/client-requirements.md)のスコープ/スコープ外で確定済み
+- `schedule.md`には、アプリに実装するEVM計算式を開発プロジェクト自身にもセルフドッグフーディングとして適用する運用も追加している(フェーズ完了時に実績時間を自己申告する)
 
 ## ディレクトリ構成
 
@@ -62,10 +63,11 @@ backend/              Laravel(app/Features配下にVertical Slice)
 
 ## 現在の状態
 
-要件定義フェーズ・設計フェーズ(WBS上のフェーズ0・1)は完了。実装フェーズに進行中。
+要件定義フェーズ・設計フェーズ(WBS上のフェーズ0・1、EVM/バグ管理追加に伴う設計拡張を含む)は完了。実装フェーズはまだ着手前。
 
 - 確定済みの要求・非機能要件: [docs/requirements/client-requirements.md](docs/requirements/client-requirements.md)
 - アーキテクチャ方針(Vertical Slice + ヘキサゴナル): [docs/adr/0001-vertical-slice-and-hexagonal-architecture.md](docs/adr/0001-vertical-slice-and-hexagonal-architecture.md)
+- 進捗指標(EVM)・バグ管理の追加方針(Bug/Progressスライス): [docs/adr/0002-evm-progress-and-bug-tracking.md](docs/adr/0002-evm-progress-and-bug-tracking.md)
 - テーブル設計: [docs/architecture/er-diagram.md](docs/architecture/er-diagram.md)
 - API設計: [docs/architecture/api-design.md](docs/architecture/api-design.md)
 - レイヤー構成(具体クラス): [docs/architecture/layer-diagram.md](docs/architecture/layer-diagram.md)
