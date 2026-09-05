@@ -26,7 +26,22 @@
 ---
 
 ## フェーズ2: 環境構築確認([#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12))
-_(未実施)_
+
+### うまくいったこと
+- Laravel/Viteスケルトンを実際にスキャフォールドし、CIをグリーンにし、`docker compose up`で実機起動確認するところまで、実装着手前にやり切れた。おかげでバックエンド実装(#17)は「動く土台の上に機能を積む」状態から始められる
+- ローカルPHPが古く実行できない問題を、Docker/CI検証中心の方針に頼るだけでなく、実際にローカルPHP 8.3を導入して解決した(ユーザー判断)。結果としてローカルでもartisan/Pint/PHPStanが直接検証できるようになり、開発体験が上がった
+
+### 課題
+- `composer create-project`をローカルの古いPHPで実行し、`composer.json`を後から手編集したため、`composer.lock`が追従せず`composer install`が2回失敗した
+- ローカルcomposerがバージョン制約を無視して依存解決した結果、CIのPHP 8.3では動かないロックファイルを一度コミットしてしまった(`config.platform.php`を固定していなかったのが原因)
+- 空ディレクトリ(`tests/Unit`, `tests/Feature`)がGitに追跡されないことを見落とし、CIで「テストディレクトリが見つからない」失敗を1回出した
+- ルートの`.gitignore`が、Laravelが自前で用意する入れ子`.gitignore`(ディレクトリ構造だけ残す標準パターン)と衝突していた
+
+### 教訓(Lessons Learned)
+- `composer.json`を手編集したら、その場で(同じ実行環境で)`composer.lock`も更新する。ズレたまま先に進まない
+- 依存解決を行う環境(ローカル/CI/本番)でPHPバージョンが異なる場合は`config.platform.php`を明示的に固定し、意図しないバージョンの依存が紛れ込むのを防ぐ
+- 「ディレクトリの存在」自体がGitでは保証されない(空ディレクトリは追跡されない)ことを、スキャフォールド系の作業では常に意識する
+- フレームワークが自前で用意する規約(Laravelの入れ子`.gitignore`等)を、プロジェクト独自の設定で安易に上書き・重複させない
 
 ## フェーズ3: バックエンド実装([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))
 _(未実施)_

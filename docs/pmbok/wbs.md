@@ -14,7 +14,7 @@
 |---|---|---|---|
 | 0 | 要件定義 | 完了 | [#4](https://github.com/YoshinoriSawaya/task-pm-app/issues/4)(内訳: [#1](https://github.com/YoshinoriSawaya/task-pm-app/issues/1) [#2](https://github.com/YoshinoriSawaya/task-pm-app/issues/2) [#3](https://github.com/YoshinoriSawaya/task-pm-app/issues/3)) |
 | 1 | 設計 | 完了 | [#9](https://github.com/YoshinoriSawaya/task-pm-app/issues/9)(内訳: [#5](https://github.com/YoshinoriSawaya/task-pm-app/issues/5)〜[#8](https://github.com/YoshinoriSawaya/task-pm-app/issues/8) + 拡張分[#41](https://github.com/YoshinoriSawaya/task-pm-app/issues/41)〜[#43](https://github.com/YoshinoriSawaya/task-pm-app/issues/43)) |
-| 2 | 環境構築確認 | 未着手 | [#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12) |
+| 2 | 環境構築確認 | 完了 | [#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12) |
 | 3 | バックエンド実装 | 未着手 | [#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17) |
 | 4 | フロントエンド実装 | 未着手 | [#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22) |
 | 5 | 統合・E2Eテスト | 未着手 | [#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25) |
