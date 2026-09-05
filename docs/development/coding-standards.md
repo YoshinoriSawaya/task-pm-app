@@ -75,6 +75,15 @@
 ### 環境変数
 - `VITE_API_BASE_URL`でバックエンドAPIのベースURLを指定する(`.env.example`参照)。ハードコードしない
 
+### エラー表示
+- APIクライアントを呼ぶカスタムフックは`{ data, error, isLoading }`の形を返す統一インターフェースとする
+- `error`がある場合は、トースト等の通知ライブラリは導入せず、フォーム・一覧の近くにインラインで`<ErrorMessage>`コンポーネントを表示する(依存を増やさない方針、コーディング規約全体の一貫性)
+
+## バックエンド/フロントエンド間の連携
+
+### CORS
+- ローカル開発ではフロント(Vite, `localhost:5173`)とバックエンド(Laravel, `localhost:8000`)が別オリジンになるため、`backend/config/cors.php`で`FRONTEND_URL`(`.env`で指定)からのアクセスを許可する。本番はEC2上で同一オリジン配信(nginxがフロントの静的ファイルと`/api`を両方さばく)を基本とし、CORS設定自体が不要になるようにする([ADR-0003](../adr/0003-deployment-architecture.md))
+
 ## 環境変数管理
 - 各アプリケーション(`backend/`・`frontend/`)に`.env.example`をコミットし、実際の値を持つ`.env`は`.gitignore`対象のまま維持する
 - `backend/.env.example`にはDB接続情報(docker-compose.ymlの値と一致させる)と、本番デプロイ時のみ使うインフラ層Basic認証用の`BASIC_AUTH_USER`/`BASIC_AUTH_PASSWORD`(値は空でコミットし、デプロイ時に実値を設定)を含める

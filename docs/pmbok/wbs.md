@@ -35,12 +35,15 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 - [#10](https://github.com/YoshinoriSawaya/task-pm-app/issues/10) docker-compose起動確認
 - [#11](https://github.com/YoshinoriSawaya/task-pm-app/issues/11) GitHub Actions CI疎通確認
 - [#52](https://github.com/YoshinoriSawaya/task-pm-app/issues/52) 静的解析・フォーマッタの設定ファイル作成([docs/development/coding-standards.md](../development/coding-standards.md)、change-log.md C4)
+- [#55](https://github.com/YoshinoriSawaya/task-pm-app/issues/55) CORS設定(change-log.md C6)
 
 ### 3. バックエンド実装 ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))
 - [#13](https://github.com/YoshinoriSawaya/task-pm-app/issues/13) マイグレーション作成(tasksテーブル)
 - [#14](https://github.com/YoshinoriSawaya/task-pm-app/issues/14) Task CRUD API実装
-- [#15](https://github.com/YoshinoriSawaya/task-pm-app/issues/15) バックエンドユニットテスト(PHPUnit)実装
+- [#15](https://github.com/YoshinoriSawaya/task-pm-app/issues/15) バックエンドユニットテスト(Pest)実装
 - [#16](https://github.com/YoshinoriSawaya/task-pm-app/issues/16) PHPStan導入・静的解析通過
+- [#44](https://github.com/YoshinoriSawaya/task-pm-app/issues/44)〜[#46](https://github.com/YoshinoriSawaya/task-pm-app/issues/46) マイグレーション追加・Bug/Progressスライス実装(change-log.md C2)
+- [#54](https://github.com/YoshinoriSawaya/task-pm-app/issues/54) デモ用シーダー作成(change-log.md C6)
 
 ### 4. フロントエンド実装 ([#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22))
 - [#18](https://github.com/YoshinoriSawaya/task-pm-app/issues/18) タスク一覧・詳細画面実装
@@ -59,7 +62,8 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 - [#28](https://github.com/YoshinoriSawaya/task-pm-app/issues/28) Before/After比較資料(クラス図等)の作成
 
 ### 7. デプロイ ([#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34))
-- [#30](https://github.com/YoshinoriSawaya/task-pm-app/issues/30) AWSインフラ構築(必要最小限、予算2000円以下)
+- [#53](https://github.com/YoshinoriSawaya/task-pm-app/issues/53) デプロイ前セキュリティレビュー(change-log.md C6)
+- [#30](https://github.com/YoshinoriSawaya/task-pm-app/issues/30) AWSインフラ構築(EC2単体、RDS不使用、[ADR-0003](../adr/0003-deployment-architecture.md))
 - [#31](https://github.com/YoshinoriSawaya/task-pm-app/issues/31) インフラ層Basic認証設定
 - [#32](https://github.com/YoshinoriSawaya/task-pm-app/issues/32) 本番動作確認
 - [#33](https://github.com/YoshinoriSawaya/task-pm-app/issues/33) AWSリソース削除(課金停止)
@@ -75,6 +79,7 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 - 子Issueはフェーズ実行中に必要に応じて追加してよい。追加した場合は親Issue本文のチェックリストにも追記する
 - フェーズの順序は上記の通りだが、厳密なウォーターフォールではない。設計フェーズの手戻りが発生した場合はchange-log.mdに記録した上で該当フェーズに戻る
 - スケジュール(2日間への時間配分)は`docs/pmbok/schedule.md`で別途管理する
+- **実装系のフェーズ(バックエンド実装[#17]、フロントエンド実装[#22]、統合・E2Eテスト[#25]等)は、親Issueをクローズする前に`/code-review`スキルで軽くレビューする。** バグ・重複・効率の観点をチェックしてから次フェーズへ進む(change-log.md C6)
 
 ## 変更履歴: スコープ拡張(change-log.md C2)
 
@@ -86,3 +91,12 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 - 統合・E2Eテストフェーズ([#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25)): [#50](https://github.com/YoshinoriSawaya/task-pm-app/issues/50) EVM計算ロジックの境界値ユニットテスト
 
 [risk-register.md](risk-register.md) R1の通り、このスコープ拡張は16時間予算に対するスケジュールリスクを承知の上で追加したもの。時間逼迫時は`Progress`スライスのUI装飾等、周辺部分から優先的に削る。
+
+## 変更履歴: PMレビューで発見した見落とし(change-log.md C6, C7)
+
+- コーディング規約策定([#51](https://github.com/YoshinoriSawaya/task-pm-app/issues/51))に伴い、環境構築確認フェーズ([#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12))に[#52](https://github.com/YoshinoriSawaya/task-pm-app/issues/52) 静的解析・フォーマッタ設定ファイル作成を追加(完了)
+- PMレビューにより以下を追加
+  - 環境構築確認フェーズ([#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12)): [#55](https://github.com/YoshinoriSawaya/task-pm-app/issues/55) CORS設定
+  - バックエンド実装フェーズ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17)): [#54](https://github.com/YoshinoriSawaya/task-pm-app/issues/54) デモ用シーダー作成
+  - デプロイフェーズ([#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34)): [#53](https://github.com/YoshinoriSawaya/task-pm-app/issues/53) デプロイ前セキュリティレビュー、[#30](https://github.com/YoshinoriSawaya/task-pm-app/issues/30)を[ADR-0003](../adr/0003-deployment-architecture.md)(EC2単体構成)に基づき具体化
+- 実装系フェーズ完了時の軽量コードレビュー(`/code-review`)を運用ルールに追加(上記「運用ルール」参照)
