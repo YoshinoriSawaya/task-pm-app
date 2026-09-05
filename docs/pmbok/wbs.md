@@ -34,6 +34,7 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 ### 2. 環境構築確認 ([#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12))
 - [#10](https://github.com/YoshinoriSawaya/task-pm-app/issues/10) docker-compose起動確認
 - [#11](https://github.com/YoshinoriSawaya/task-pm-app/issues/11) GitHub Actions CI疎通確認
+- [#52](https://github.com/YoshinoriSawaya/task-pm-app/issues/52) 静的解析・フォーマッタの設定ファイル作成([docs/development/coding-standards.md](../development/coding-standards.md)、change-log.md C4)
 
 ### 3. バックエンド実装 ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))
 - [#13](https://github.com/YoshinoriSawaya/task-pm-app/issues/13) マイグレーション作成(tasksテーブル)
