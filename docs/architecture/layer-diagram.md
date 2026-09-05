@@ -2,6 +2,7 @@
 
 [ADR-0001](../adr/0001-vertical-slice-and-hexagonal-architecture.md)の方針を、Taskスライスの具体的なクラス/ファイル構成に落とし込む。
 [ER図](er-diagram.md)・[API設計](api-design.md)で確定した内容がこの構成の入出力契約になる。
+[ADR-0002](../adr/0002-evm-progress-and-bug-tracking.md)により、`Bug`・`Progress`の2スライスを追加している。
 
 ## バックエンド: `backend/app/Features/Task/`
 
@@ -13,6 +14,35 @@
 | **Presentation** | HTTP境界 | `Presentation/Http/Controllers/TaskController.php`、`Presentation/Http/Requests/StoreTaskRequest.php`・`UpdateTaskRequest.php`([API設計](api-design.md)のバリデーション定義を実装)、`Presentation/Http/Resources/TaskResource.php`(レスポンス整形、`subtasks`のネストを含む) |
 
 配線(DI)は`Application/Ports/TaskRepositoryInterface` → `Infrastructure/Persistence/EloquentTaskRepository`のバインドを`Providers/TaskServiceProvider.php`(コンポジションルート)で行う。Domain/ApplicationはInfrastructureの実装クラスを直接参照しない。
+
+## バックエンド: `backend/app/Features/Bug/`
+
+Taskスライスと同じ4層構成。`related_task_id`はDomain層では単なる`int`値として保持し、`Task`エンティティへの参照は持たない。
+
+| 層 | 主なクラス/ファイル |
+|---|---|
+| Domain | `Domain/Bug.php`、`Domain/BugSeverity.php`・`Domain/BugStatus.php`(値オブジェクト) |
+| Application | `Application/UseCases/CreateBug.php`・`UpdateBug.php`・`DeleteBug.php`・`ListBugs.php`・`GetBug.php`、`Application/Ports/BugRepositoryInterface.php` |
+| Infrastructure | `Infrastructure/Persistence/EloquentBugModel.php`・`EloquentBugRepository.php`・`BugMapper.php` |
+| Presentation | `Presentation/Http/Controllers/BugController.php`、`StoreBugRequest.php`・`UpdateBugRequest.php`、`BugResource.php` |
+
+## バックエンド: `backend/app/Features/Progress/`(CQRS的な読み取り専用スライス)
+
+Task/Bugスライスのユースケースには依存せず、`tasks`/`bugs`テーブルを直接クエリする。ドメイン層(不変条件を守るエンティティ)を持たず、集計ロジックのみのシンプルな構成。
+
+| 層 | 主なクラス/ファイル |
+|---|---|
+| Application | `Application/UseCases/CalculateEvmSummary.php`([ADR-0002](../adr/0002-evm-progress-and-bug-tracking.md)のEVM計算式を実装) |
+| Infrastructure | `Infrastructure/Query/ProgressQueryService.php`(`tasks`/`bugs`への直接クエリ。Task/Bugスライスのリポジトリを経由しない) |
+| Presentation | `Presentation/Http/Controllers/ProgressController.php`、`ProgressResource.php` |
+
+```mermaid
+flowchart LR
+    ProgressController --> CalculateEvmSummary
+    CalculateEvmSummary --> ProgressQueryService
+    ProgressQueryService -->|直接クエリ、書き込み側を経由しない| TasksTable[(tasks)]
+    ProgressQueryService -->|直接クエリ| BugsTable[(bugs)]
+```
 
 ## 依存関係図
 
@@ -73,4 +103,5 @@ ADR-0001の通り、バックエンドほど厳密な多層化はせず3層に�
 ## フォローアップ
 
 - 本構成に基づき、バックエンド実装([#13](https://github.com/YoshinoriSawaya/task-pm-app/issues/13)〜[#16](https://github.com/YoshinoriSawaya/task-pm-app/issues/16))・フロントエンド実装([#18](https://github.com/YoshinoriSawaya/task-pm-app/issues/18)〜[#21](https://github.com/YoshinoriSawaya/task-pm-app/issues/21))を進める
+- Bug/Progressスライスの実装Issueをバックエンド実装フェーズ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17))に追加する
 - リファクタリングフェーズ([#26](https://github.com/YoshinoriSawaya/task-pm-app/issues/26)〜[#28](https://github.com/YoshinoriSawaya/task-pm-app/issues/28))では、この構成に反する「Before(密結合)」実装(例: Controllerから直接Eloquentモデルを操作する等)をあえて作り、After(本構成)へのリファクタリングとして比較する

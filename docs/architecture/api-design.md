@@ -2,6 +2,7 @@
 
 [ER図](er-diagram.md)のテーブル設計と、[client-requirements.md](../requirements/client-requirements.md)のスコープ(タスクCRUD一式)に基づくAPI設計。
 [ADR-0001](../adr/0001-vertical-slice-and-hexagonal-architecture.md)のPresentation層(Controller/FormRequest/Resource)がこの契約を実装する。
+[ADR-0002](../adr/0002-evm-progress-and-bug-tracking.md)により、バグ管理(`/api/bugs`)と進捗指標(`/api/progress`)を追加している。
 
 ## 設計方針・決定事項
 
@@ -21,6 +22,12 @@
 | POST | `/api/tasks` | タスク作成(`parent_task_id`指定で子タスクとして作成) | `CreateTask` |
 | PATCH | `/api/tasks/{id}` | タスク編集(部分更新。ステータス変更も含む) | `UpdateTask` |
 | DELETE | `/api/tasks/{id}` | タスク論理削除(親なら子タスクもカスケード論理削除) | `DeleteTask` |
+| GET | `/api/bugs` | バグ一覧 | `ListBugs`(Bugスライス) |
+| GET | `/api/bugs/{id}` | バグ詳細 | `GetBug`(Bugスライス) |
+| POST | `/api/bugs` | バグ登録 | `CreateBug`(Bugスライス) |
+| PATCH | `/api/bugs/{id}` | バグ編集(解決時の`status`/`resolved_at`更新含む) | `UpdateBug`(Bugスライス) |
+| DELETE | `/api/bugs/{id}` | バグ論理削除 | `DeleteBug`(Bugスライス) |
+| GET | `/api/progress` | 進捗指標(EVM)・バグ統計の取得 | `CalculateEvmSummary`(Progressスライス、読み取り専用) |
 
 ## リクエスト/レスポンス定義
 
@@ -102,6 +109,70 @@
 - 処理: 対象タスクを論理削除。対象が親タスク(子タスクを持つ)の場合、配下の子タスクも合わせて論理削除する
 - レスポンス: `204 No Content` / `404 Not Found`
 
+### Bugリソース(共通レスポンス形式)
+
+```json
+{
+  "id": 1,
+  "related_task_id": 2,
+  "title": "ステータス更新後に画面が再描画されない",
+  "description": "PATCH成功後、一覧の該当行が古いステータスのまま表示される",
+  "severity": "medium",
+  "status": "open",
+  "discovered_at": "2026-09-05",
+  "resolved_at": null,
+  "created_at": "2026-09-05T04:00:00Z",
+  "updated_at": "2026-09-05T04:00:00Z"
+}
+```
+
+### GET /api/bugs / GET /api/bugs/{id} / POST /api/bugs / PATCH /api/bugs/{id} / DELETE /api/bugs/{id}
+
+`/api/tasks`と同じ形式(一覧は`{"data": [...]}`、詳細・作成・編集はBugリソース単体、削除は`204`)。バリデーションは以下。
+
+| フィールド | 型 | 必須 | バリデーション |
+|---|---|---|---|
+| `related_task_id` | integer, nullable | 任意 | 存在するタスクのIDであること |
+| `title` | string | 必須(POST時) | 255文字以内 |
+| `description` | string, nullable | 任意 | |
+| `severity` | string | 任意(省略時`medium`) | `high`\|`medium`\|`low` |
+| `status` | string | 任意(省略時`open`) | `open`\|`resolved`。`resolved`にする場合は`resolved_at`も併せて指定する |
+| `discovered_at` | date | 必須(POST時) | `YYYY-MM-DD` |
+| `resolved_at` | date, nullable | 任意 | `YYYY-MM-DD`。`status=open`のとき`resolved_at`が指定されていたら`422` |
+
+### GET /api/progress
+
+- リクエスト: なし
+- レスポンス: `200 OK`
+
+```json
+{
+  "evm": {
+    "bac": 40.0,
+    "pv": 18.0,
+    "ev": 15.0,
+    "ac": 17.0,
+    "cv": -2.0,
+    "sv": -3.0,
+    "cpi": 0.88,
+    "spi": 0.83,
+    "eac": 45.5,
+    "etc": 28.5,
+    "vac": -5.5
+  },
+  "bugs": {
+    "total": 6,
+    "open": 2,
+    "resolved": 4,
+    "resolution_rate": 0.67,
+    "defect_density": 0.75
+  },
+  "calculated_at": "2026-09-05T04:00:00Z"
+}
+```
+
+計算式は[ADR-0002](../adr/0002-evm-progress-and-bug-tracking.md)参照。`ac=0`のとき`cpi=1`、`pv=0`のとき`spi=1`、完了済み末端タスクが0件のとき`defect_density`は`null`を返す。
+
 ## エラーレスポンス共通形式
 
 Laravel標準のバリデーションエラー形式をそのまま採用する(独自フォーマットを設けない = 一般的なベストプラクティスの踏襲)。
@@ -119,3 +190,4 @@ Laravel標準のバリデーションエラー形式をそのまま採用する(
 
 - 本設計に基づきバックエンド実装([#14](https://github.com/YoshinoriSawaya/task-pm-app/issues/14) Task CRUD API実装)を進める
 - フロントエンドのAPIクライアント設計([#18](https://github.com/YoshinoriSawaya/task-pm-app/issues/18)以降)も本契約に従う
+- Bug/Progressスライスの実装は、WBSに追加する新規Issue(バックエンド実装フェーズ[#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17)配下)で管理する
