@@ -21,10 +21,10 @@ class UpdateTaskRequest extends FormRequest
             'description' => ['sometimes', 'nullable', 'string'],
             'status' => ['sometimes', 'in:not_started,in_progress,done'],
             'priority' => ['sometimes', 'in:high,medium,low'],
-            'due_date' => ['sometimes', 'nullable', 'date'],
+            'due_date' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             'definition_of_done' => ['sometimes', 'nullable', 'string'],
-            'estimated_effort' => ['sometimes', 'nullable', 'numeric', 'min:0'],
-            'actual_effort' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'estimated_effort' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
+            'actual_effort' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
         ];
         // parent_task_idは受け付けない(api-design.md「親子関係の付け替えはスコープ外」)。
         // ここに定義しないため、送られても無視される。

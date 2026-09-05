@@ -11,15 +11,10 @@ final class EloquentTaskRepository implements TaskRepositoryInterface
     {
     }
 
+    // 新規作成専用(CreateTaskのみが呼ぶ)。更新はupdatePartial()を使う(code-review指摘: 未到達分岐の削除)。
     public function save(Task $task): Task
     {
-        if ($task->id === null) {
-            $model = EloquentTaskModel::create($this->mapper->toAttributes($task));
-        } else {
-            $model = EloquentTaskModel::findOrFail($task->id);
-            $model->fill($this->mapper->toAttributes($task));
-            $model->save();
-        }
+        $model = EloquentTaskModel::create($this->mapper->toAttributes($task));
 
         return $this->mapper->toDomain($model);
     }

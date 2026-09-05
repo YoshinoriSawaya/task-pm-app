@@ -6,6 +6,7 @@ use App\Features\Task\Domain\Task;
 
 interface TaskRepositoryInterface
 {
+    /** 新規作成専用。更新はupdatePartial()を使う */
     public function save(Task $task): Task;
 
     public function findById(int $id): ?Task;
