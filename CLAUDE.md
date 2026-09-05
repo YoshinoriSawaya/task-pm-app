@@ -61,18 +61,13 @@ backend/              Laravel(app/Features配下にVertical Slice)
 .github/workflows/    CI設定
 ```
 
-## 現在の状態
+## 進捗の確認方法
 
-要件定義フェーズ・設計フェーズ(WBS上のフェーズ0・1、EVM/バグ管理追加に伴う設計拡張を含む)は完了。実装フェーズはまだ着手前。
+**このファイルには進捗のスナップショットや「次のアクション」を書き込まない。** 更新を怠るとすぐに陳腐化するため、進捗・次にやるべきことは常に以下を参照する(このセクション自体は更新不要な、参照先を示すだけの固定内容)。
 
-- 確定済みの要求・非機能要件: [docs/requirements/client-requirements.md](docs/requirements/client-requirements.md)
-- アーキテクチャ方針(Vertical Slice + ヘキサゴナル): [docs/adr/0001-vertical-slice-and-hexagonal-architecture.md](docs/adr/0001-vertical-slice-and-hexagonal-architecture.md)
-- 進捗指標(EVM)・バグ管理の追加方針(Bug/Progressスライス): [docs/adr/0002-evm-progress-and-bug-tracking.md](docs/adr/0002-evm-progress-and-bug-tracking.md)
-- テーブル設計: [docs/architecture/er-diagram.md](docs/architecture/er-diagram.md)
-- API設計: [docs/architecture/api-design.md](docs/architecture/api-design.md)
-- レイヤー構成(具体クラス): [docs/architecture/layer-diagram.md](docs/architecture/layer-diagram.md)
-- 既知のリスク・変更履歴: [docs/pmbok/risk-register.md](docs/pmbok/risk-register.md) / [docs/pmbok/change-log.md](docs/pmbok/change-log.md)
-
-WBS全体とフェーズごとの進捗は[docs/pmbok/wbs.md](docs/pmbok/wbs.md)とGitHub Issues([YoshinoriSawaya/task-pm-app](https://github.com/YoshinoriSawaya/task-pm-app/issues))が正(生きた情報源)。決定事項の詳細をこのファイルに複製しない — 進捗が変わるたびにここを更新すると、内容が分裂して陳腐化するため、要約とリンクのみを置く方針とする。
-
-**次のアクション**: WBSフェーズ2「環境構築確認」(Issue #12)から着手する。
+- WBS全体とフェーズごとの進捗: [docs/pmbok/wbs.md](docs/pmbok/wbs.md)
+- タスク単位の進捗: [GitHub Issues](https://github.com/YoshinoriSawaya/task-pm-app/issues)。Openな「[フェーズ]」親Issueのうち番号が最も若いものが、次に着手すべきフェーズ
+- 確定した要求・非機能要件: `docs/requirements/client-requirements.md`
+- 確定した設計判断: `docs/adr/`配下のADR一覧(番号順。最新の番号が最新の決定)
+- テーブル設計・API設計・レイヤー構成: `docs/architecture/`配下
+- 既知のリスク・変更履歴・振り返り: `docs/pmbok/risk-register.md` / `change-log.md` / `retrospective.md`
