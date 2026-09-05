@@ -1,9 +1,11 @@
 name: frontend-ci
 
 on:
-  pull_request:
+  push:
+    branches: [main]
     paths:
       - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
 
 jobs:
   lint-and-test:
@@ -17,5 +19,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+      - run: npx prettier --check .
       - run: npm run lint
+      - run: npx tsc --noEmit
       - run: npm test

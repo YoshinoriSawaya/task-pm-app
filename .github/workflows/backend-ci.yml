@@ -1,9 +1,11 @@
 name: backend-ci
 
 on:
-  pull_request:
+  push:
+    branches: [main]
     paths:
       - "backend/**"
+      - ".github/workflows/backend-ci.yml"
 
 jobs:
   lint-and-test:
@@ -17,5 +19,6 @@ jobs:
         with:
           php-version: "8.3"
       - run: composer install
+      - run: vendor/bin/pint --test
       - run: vendor/bin/phpstan analyse
       - run: vendor/bin/pest
