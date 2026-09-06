@@ -19,3 +19,25 @@ export interface Task {
   // 親タスクのレスポンスにのみ含まれる(子タスク自身のレスポンスにはキー自体が存在しない)
   subtasks?: Task[]
 }
+
+// POST /api/tasks のリクエストボディ。statusはドメイン不変条件により指定不可(常にnot_startedから開始)
+export interface CreateTaskInput {
+  title: string
+  description: string | null
+  priority: TaskPriority
+  due_date: string | null
+  definition_of_done: string | null
+  estimated_effort: number | null
+}
+
+// PATCH /api/tasks/{id} のリクエストボディ。parent_task_idは受け付けない(作成時のみ指定可能)
+export interface UpdateTaskInput {
+  title: string
+  description: string | null
+  status: TaskStatus
+  priority: TaskPriority
+  due_date: string | null
+  definition_of_done: string | null
+  estimated_effort: number | null
+  actual_effort: number | null
+}

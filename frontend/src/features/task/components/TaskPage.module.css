@@ -12,3 +12,9 @@
 .detailSection {
   flex: 2;
 }
+
+.detailActions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}

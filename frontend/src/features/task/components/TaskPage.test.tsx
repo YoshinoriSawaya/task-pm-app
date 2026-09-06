@@ -1,14 +1,19 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { TaskPage } from './TaskPage'
 import { useTasks } from '../hooks/useTasks'
 import { useTask } from '../hooks/useTask'
+import { createTask, updateTask, deleteTask } from '../api/taskApiClient'
 import type { Task } from '../types'
 
 jest.mock('../hooks/useTasks')
 jest.mock('../hooks/useTask')
+jest.mock('../api/taskApiClient')
 
 const mockUseTasks = useTasks as jest.MockedFunction<typeof useTasks>
 const mockUseTask = useTask as jest.MockedFunction<typeof useTask>
+const mockCreateTask = createTask as jest.MockedFunction<typeof createTask>
+const mockUpdateTask = updateTask as jest.MockedFunction<typeof updateTask>
+const mockDeleteTask = deleteTask as jest.MockedFunction<typeof deleteTask>
 
 const task: Task = {
   id: 1,
@@ -27,14 +32,22 @@ const task: Task = {
 }
 
 describe('TaskPage', () => {
+  const refetchTasks = jest.fn()
+  const refetchTask = jest.fn()
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   it('一覧が読み込み中の場合は読み込み中メッセージを表示する', () => {
     // Arrange
-    mockUseTasks.mockReturnValue({ data: null, error: null, isLoading: true })
-    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false })
+    mockUseTasks.mockReturnValue({
+      data: null,
+      error: null,
+      isLoading: true,
+      refetch: refetchTasks,
+    })
+    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false, refetch: refetchTask })
 
     // Act
     render(<TaskPage />)
@@ -49,8 +62,9 @@ describe('TaskPage', () => {
       data: null,
       error: '一覧の取得に失敗しました',
       isLoading: false,
+      refetch: refetchTasks,
     })
-    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false })
+    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false, refetch: refetchTask })
 
     // Act
     render(<TaskPage />)
@@ -61,16 +75,94 @@ describe('TaskPage', () => {
 
   it('タスクを選択すると詳細取得フックへidが渡され、詳細が表示される', () => {
     // Arrange
-    mockUseTasks.mockReturnValue({ data: [task], error: null, isLoading: false })
-    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false })
+    mockUseTasks.mockReturnValue({
+      data: [task],
+      error: null,
+      isLoading: false,
+      refetch: refetchTasks,
+    })
+    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false, refetch: refetchTask })
     render(<TaskPage />)
     expect(screen.getByText('タスクを選択してください')).toBeInTheDocument()
 
     // Act
-    mockUseTask.mockReturnValue({ data: task, error: null, isLoading: false })
-    fireEvent.click(screen.getByText('要件定義'))
+    mockUseTask.mockReturnValue({ data: task, error: null, isLoading: false, refetch: refetchTask })
+    fireEvent.click(screen.getByRole('button', { name: '要件定義' }))
 
     // Assert
     expect(mockUseTask).toHaveBeenLastCalledWith(1)
+  })
+
+  it('新規作成ボタンから作成フォームを送信するとcreateTaskが呼ばれ、一覧がrefetchされる', async () => {
+    // Arrange
+    mockUseTasks.mockReturnValue({
+      data: [task],
+      error: null,
+      isLoading: false,
+      refetch: refetchTasks,
+    })
+    mockUseTask.mockReturnValue({ data: null, error: null, isLoading: false, refetch: refetchTask })
+    mockCreateTask.mockResolvedValue({ ...task, id: 2, title: '新しいタスク' })
+    render(<TaskPage />)
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: '新規作成' }))
+    fireEvent.change(screen.getByLabelText('タイトル'), { target: { value: '新しいタスク' } })
+    fireEvent.click(screen.getByRole('button', { name: '作成' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockCreateTask).toHaveBeenCalled()
+    })
+    expect(refetchTasks).toHaveBeenCalled()
+    expect(screen.queryByLabelText('タイトル')).not.toBeInTheDocument()
+  })
+
+  it('詳細表示中に編集して送信するとupdateTaskが呼ばれ、一覧・詳細がrefetchされる', async () => {
+    // Arrange
+    mockUseTasks.mockReturnValue({
+      data: [task],
+      error: null,
+      isLoading: false,
+      refetch: refetchTasks,
+    })
+    mockUseTask.mockReturnValue({ data: task, error: null, isLoading: false, refetch: refetchTask })
+    mockUpdateTask.mockResolvedValue({ ...task, status: 'in_progress' })
+    render(<TaskPage />)
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: '要件定義' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '更新' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockUpdateTask).toHaveBeenCalledWith(1, expect.any(Object))
+    })
+    expect(refetchTasks).toHaveBeenCalled()
+    expect(refetchTask).toHaveBeenCalled()
+  })
+
+  it('削除ボタンを押すとdeleteTaskが呼ばれ、選択が解除され一覧がrefetchされる', async () => {
+    // Arrange
+    mockUseTasks.mockReturnValue({
+      data: [task],
+      error: null,
+      isLoading: false,
+      refetch: refetchTasks,
+    })
+    mockUseTask.mockReturnValue({ data: task, error: null, isLoading: false, refetch: refetchTask })
+    mockDeleteTask.mockResolvedValue(undefined)
+    render(<TaskPage />)
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: '要件定義' }))
+    fireEvent.click(screen.getByRole('button', { name: '削除' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(mockDeleteTask).toHaveBeenCalledWith(1)
+    })
+    expect(refetchTasks).toHaveBeenCalled()
   })
 })

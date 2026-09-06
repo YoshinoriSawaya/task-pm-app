@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { fetchTask } from '../api/taskApiClient'
 import type { Task } from '../types'
 
@@ -6,12 +6,14 @@ interface UseTaskResult {
   data: Task | null
   error: string | null
   isLoading: boolean
+  refetch: () => void
 }
 
 export function useTask(id: number | null): UseTaskResult {
   const [data, setData] = useState<Task | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(id !== null)
+  const [refetchCount, setRefetchCount] = useState(0)
 
   useEffect(() => {
     if (id === null) {
@@ -42,7 +44,11 @@ export function useTask(id: number | null): UseTaskResult {
     return () => {
       isMounted = false
     }
-  }, [id])
+  }, [id, refetchCount])
 
-  return { data, error, isLoading }
+  const refetch = useCallback(() => {
+    setRefetchCount((count) => count + 1)
+  }, [])
+
+  return { data, error, isLoading, refetch }
 }

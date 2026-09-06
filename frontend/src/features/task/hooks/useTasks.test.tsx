@@ -62,4 +62,24 @@ describe('useTasks', () => {
     expect(result.current.data).toBeNull()
     expect(result.current.error).toBe('サーバーエラーが発生しました')
   })
+
+  it('refetchを呼ぶと再度fetchTasksを呼び出し、dataを更新する', async () => {
+    // Arrange
+    mockFetchTasks.mockResolvedValueOnce([task])
+    const { result } = renderHook(() => useTasks())
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
+    })
+    const updatedTask: Task = { ...task, title: '要件定義(更新済み)' }
+    mockFetchTasks.mockResolvedValueOnce([updatedTask])
+
+    // Act
+    result.current.refetch()
+
+    // Assert
+    await waitFor(() => {
+      expect(result.current.data).toEqual([updatedTask])
+    })
+    expect(mockFetchTasks).toHaveBeenCalledTimes(2)
+  })
 })
