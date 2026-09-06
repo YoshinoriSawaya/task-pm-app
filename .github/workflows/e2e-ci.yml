@@ -20,19 +20,21 @@ jobs:
         run: docker compose up -d --build
 
       - name: バックエンドの起動を待つ
+        # 初回はcomposer install(126パッケージ)+migrateがキャッシュ無しで
+        # 走るため数分かかりうる。最大5分待つ
         run: |
-          for i in $(seq 1 30); do
+          for i in $(seq 1 60); do
             curl -sf http://localhost:8000/ && exit 0
-            sleep 2
+            sleep 5
           done
           echo "backend did not become ready in time" >&2
           exit 1
 
       - name: フロントエンドの起動を待つ
         run: |
-          for i in $(seq 1 30); do
+          for i in $(seq 1 60); do
             curl -sf http://localhost:5173/ && exit 0
-            sleep 2
+            sleep 5
           done
           echo "frontend did not become ready in time" >&2
           exit 1
@@ -61,6 +63,7 @@ jobs:
           name: playwright-report
           path: e2e/playwright-report/
           retention-days: 7
+          if-no-files-found: ignore
 
       - name: docker composeを停止
         if: always()
