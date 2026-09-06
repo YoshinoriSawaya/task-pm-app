@@ -22,6 +22,8 @@ services:
       db:
         condition: service_healthy
     environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
       DB_HOST: db
       DB_DATABASE: task_pm_app
       DB_USERNAME: task_pm_app
@@ -34,6 +36,12 @@ services:
     command: >
       sh -c "
         [ -f .env ] || cp .env.example .env &&
+        sed -i \"s#^APP_ENV=.*#APP_ENV=$$APP_ENV#\" .env &&
+        sed -i \"s#^APP_DEBUG=.*#APP_DEBUG=$$APP_DEBUG#\" .env &&
+        sed -i \"s#^DB_HOST=.*#DB_HOST=$$DB_HOST#\" .env &&
+        sed -i \"s#^DB_DATABASE=.*#DB_DATABASE=$$DB_DATABASE#\" .env &&
+        sed -i \"s#^DB_USERNAME=.*#DB_USERNAME=$$DB_USERNAME#\" .env &&
+        sed -i \"s#^DB_PASSWORD=.*#DB_PASSWORD=$$DB_PASSWORD#\" .env &&
         composer install &&
         php artisan key:generate --ansi --force &&
         php artisan migrate --force &&
