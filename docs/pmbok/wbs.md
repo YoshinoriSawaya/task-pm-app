@@ -19,7 +19,7 @@
 | 4 | フロントエンド実装 | 完了(Must分・Should分#47〜#49とも完了。change-log.md C19) | [#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22) |
 | 5 | 統合・E2Eテスト | 完了 | [#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25) |
 | 6 | リファクタリング・設計比較 | 完了 | [#29](https://github.com/YoshinoriSawaya/task-pm-app/issues/29) |
-| 7 | デプロイ | 未着手 | [#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34) |
+| 7 | デプロイ | 完了(change-log.md C22〜C25) | [#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34) |
 | 8 | PMBOKドキュメント整備・振り返り | 未着手 | [#40](https://github.com/YoshinoriSawaya/task-pm-app/issues/40) |
 
 ## フェーズ内訳
