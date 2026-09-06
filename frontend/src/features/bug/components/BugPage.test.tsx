@@ -129,4 +129,88 @@ describe('BugPage', () => {
     })
     expect(refetchBugs).toHaveBeenCalled()
   })
+
+  it('削除に失敗した場合、詳細表示(viewモード)にErrorMessageを表示する(/code-review指摘)', async () => {
+    // Arrange
+    mockUseBugs.mockReturnValue({
+      data: [bug],
+      error: null,
+      isLoading: false,
+      refetch: refetchBugs,
+    })
+    mockUseBug.mockReturnValue({ data: bug, error: null, isLoading: false, refetch: refetchBug })
+    mockDeleteBug.mockRejectedValue(new Error('削除に失敗しました(サーバーエラー)'))
+    render(<BugPage />)
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: /バグ1/ }))
+    fireEvent.click(screen.getByRole('button', { name: '削除' }))
+
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('削除に失敗しました(サーバーエラー)')
+    })
+  })
+
+  it('作成中に別バグを選択すると、作成フォームを閉じて詳細を表示する(/code-review指摘)', () => {
+    // Arrange
+    mockUseBugs.mockReturnValue({
+      data: [bug],
+      error: null,
+      isLoading: false,
+      refetch: refetchBugs,
+    })
+    mockUseBug.mockReturnValue({ data: bug, error: null, isLoading: false, refetch: refetchBug })
+    render(<BugPage />)
+    fireEvent.click(screen.getByRole('button', { name: '新規作成' }))
+    expect(screen.getByLabelText('タイトル')).toBeInTheDocument()
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: /バグ1/ }))
+
+    // Assert
+    expect(screen.queryByLabelText('タイトル')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'バグ1' })).toBeInTheDocument()
+  })
+
+  it('編集中に新規作成をキャンセルしても、編集フォームが再表示されない(/code-review指摘)', () => {
+    // Arrange
+    mockUseBugs.mockReturnValue({
+      data: [bug],
+      error: null,
+      isLoading: false,
+      refetch: refetchBugs,
+    })
+    mockUseBug.mockReturnValue({ data: bug, error: null, isLoading: false, refetch: refetchBug })
+    render(<BugPage />)
+    fireEvent.click(screen.getByRole('button', { name: /バグ1/ }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
+    expect(screen.getByRole('button', { name: '更新' })).toBeInTheDocument()
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: '新規作成' }))
+    fireEvent.click(screen.getByRole('button', { name: 'キャンセル' }))
+
+    // Assert
+    expect(screen.queryByRole('button', { name: '更新' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '編集' })).toBeInTheDocument()
+  })
+
+  it('バグ切替時に詳細取得中の場合は読み込み中と表示し、前のバグの詳細を残さない(/code-review指摘)', () => {
+    // Arrange
+    mockUseBugs.mockReturnValue({
+      data: [bug],
+      error: null,
+      isLoading: false,
+      refetch: refetchBugs,
+    })
+    mockUseBug.mockReturnValue({ data: null, error: null, isLoading: true, refetch: refetchBug })
+
+    // Act
+    render(<BugPage />)
+
+    // Assert
+    expect(screen.getByText('詳細を読み込み中...')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'バグ1' })).not.toBeInTheDocument()
+  })
 })

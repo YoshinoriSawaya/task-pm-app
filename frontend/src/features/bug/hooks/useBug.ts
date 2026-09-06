@@ -25,6 +25,8 @@ export function useBug(id: number | null): UseBugResult {
 
     let isMounted = true
 
+    // idが切り替わった際、前のバグの詳細を一瞬表示し続けないようクリアする(/code-review指摘)
+    setData(null)
     setIsLoading(true)
     fetchBug(id)
       .then((bug) => {

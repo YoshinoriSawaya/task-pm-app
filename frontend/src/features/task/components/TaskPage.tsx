@@ -23,10 +23,22 @@ export function TaskPage(): React.JSX.Element {
     isLoading: isListLoading,
     refetch: refetchTasks,
   } = useTasks()
-  const { data: selectedTask, error: detailError, refetch: refetchTask } = useTask(selectedTaskId)
+  const {
+    data: selectedTask,
+    error: detailError,
+    isLoading: isDetailLoading,
+    refetch: refetchTask,
+  } = useTask(selectedTaskId)
 
   function handleSelectTask(id: number): void {
     setSelectedTaskId(id)
+    setIsCreating(false)
+    setDetailMode('view')
+    setMutationError(null)
+  }
+
+  function handleStartCreate(): void {
+    setIsCreating(true)
     setDetailMode('view')
     setMutationError(null)
   }
@@ -71,13 +83,7 @@ export function TaskPage(): React.JSX.Element {
     <div className={styles.page}>
       <section className={styles.listSection}>
         <h1>タスク一覧</h1>
-        <button
-          type="button"
-          onClick={() => {
-            setIsCreating(true)
-            setMutationError(null)
-          }}
-        >
+        <button type="button" onClick={handleStartCreate}>
           新規作成
         </button>
         {isListLoading && <p>読み込み中...</p>}
@@ -101,46 +107,60 @@ export function TaskPage(): React.JSX.Element {
             parentTaskOptions={tasks ?? []}
           />
         )}
-        {!isCreating && detailError !== null && <ErrorMessage message={detailError} />}
-        {!isCreating && detailError === null && selectedTask === null && <TaskDetail task={null} />}
-        {!isCreating && detailError === null && selectedTask !== null && detailMode === 'view' && (
-          <>
-            <TaskDetail task={selectedTask} />
-            <div className={styles.detailActions}>
-              <button
-                type="button"
-                onClick={() => {
-                  setDetailMode('edit')
-                  setMutationError(null)
-                }}
-              >
-                編集
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  void handleDelete()
-                }}
-              >
-                削除
-              </button>
-            </div>
-          </>
+        {!isCreating && isDetailLoading && <p>詳細を読み込み中...</p>}
+        {!isCreating && !isDetailLoading && detailError !== null && (
+          <ErrorMessage message={detailError} />
         )}
-        {!isCreating && detailError === null && selectedTask !== null && detailMode === 'edit' && (
-          <TaskForm
-            mode="edit"
-            initialValues={selectedTask}
-            onSubmit={(input) => {
-              void handleUpdate(input)
-            }}
-            onCancel={() => {
-              setDetailMode('view')
-              setMutationError(null)
-            }}
-            error={mutationError}
-          />
+        {!isCreating && !isDetailLoading && detailError === null && selectedTask === null && (
+          <TaskDetail task={null} />
         )}
+        {!isCreating &&
+          !isDetailLoading &&
+          detailError === null &&
+          selectedTask !== null &&
+          detailMode === 'view' && (
+            <>
+              <TaskDetail task={selectedTask} />
+              {mutationError !== null && <ErrorMessage message={mutationError} />}
+              <div className={styles.detailActions}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDetailMode('edit')
+                    setMutationError(null)
+                  }}
+                >
+                  編集
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void handleDelete()
+                  }}
+                >
+                  削除
+                </button>
+              </div>
+            </>
+          )}
+        {!isCreating &&
+          !isDetailLoading &&
+          detailError === null &&
+          selectedTask !== null &&
+          detailMode === 'edit' && (
+            <TaskForm
+              mode="edit"
+              initialValues={selectedTask}
+              onSubmit={(input) => {
+                void handleUpdate(input)
+              }}
+              onCancel={() => {
+                setDetailMode('view')
+                setMutationError(null)
+              }}
+              error={mutationError}
+            />
+          )}
       </section>
     </div>
   )

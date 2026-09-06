@@ -25,6 +25,8 @@ export function useTask(id: number | null): UseTaskResult {
 
     let isMounted = true
 
+    // idが切り替わった際、前のタスクの詳細を一瞬表示し続けないようクリアする(/code-review指摘)
+    setData(null)
     setIsLoading(true)
     fetchTask(id)
       .then((task) => {

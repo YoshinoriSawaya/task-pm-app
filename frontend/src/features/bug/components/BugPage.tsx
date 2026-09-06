@@ -19,12 +19,24 @@ export function BugPage(): React.JSX.Element {
   const [mutationError, setMutationError] = useState<string | null>(null)
 
   const { data: bugs, error: listError, isLoading: isListLoading, refetch: refetchBugs } = useBugs()
-  const { data: selectedBug, error: detailError, refetch: refetchBug } = useBug(selectedBugId)
+  const {
+    data: selectedBug,
+    error: detailError,
+    isLoading: isDetailLoading,
+    refetch: refetchBug,
+  } = useBug(selectedBugId)
   // 関連タスク選択用。トップレベルタスクのみで十分なため、あえて子タスクは含めない
   const { data: tasks } = useTasks()
 
   function handleSelectBug(id: number): void {
     setSelectedBugId(id)
+    setIsCreating(false)
+    setDetailMode('view')
+    setMutationError(null)
+  }
+
+  function handleStartCreate(): void {
+    setIsCreating(true)
     setDetailMode('view')
     setMutationError(null)
   }
@@ -69,13 +81,7 @@ export function BugPage(): React.JSX.Element {
     <div className={styles.page}>
       <section className={styles.listSection}>
         <h1>バグ一覧</h1>
-        <button
-          type="button"
-          onClick={() => {
-            setIsCreating(true)
-            setMutationError(null)
-          }}
-        >
+        <button type="button" onClick={handleStartCreate}>
           新規作成
         </button>
         {isListLoading && <p>読み込み中...</p>}
@@ -99,46 +105,60 @@ export function BugPage(): React.JSX.Element {
             relatedTaskOptions={tasks ?? []}
           />
         )}
-        {!isCreating && detailError !== null && <ErrorMessage message={detailError} />}
-        {!isCreating && detailError === null && selectedBug === null && <BugDetail bug={null} />}
-        {!isCreating && detailError === null && selectedBug !== null && detailMode === 'view' && (
-          <>
-            <BugDetail bug={selectedBug} />
-            <div className={styles.detailActions}>
-              <button
-                type="button"
-                onClick={() => {
-                  setDetailMode('edit')
-                  setMutationError(null)
-                }}
-              >
-                編集
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  void handleDelete()
-                }}
-              >
-                削除
-              </button>
-            </div>
-          </>
+        {!isCreating && isDetailLoading && <p>詳細を読み込み中...</p>}
+        {!isCreating && !isDetailLoading && detailError !== null && (
+          <ErrorMessage message={detailError} />
         )}
-        {!isCreating && detailError === null && selectedBug !== null && detailMode === 'edit' && (
-          <BugForm
-            mode="edit"
-            initialValues={selectedBug}
-            onSubmit={(input) => {
-              void handleUpdate(input)
-            }}
-            onCancel={() => {
-              setDetailMode('view')
-              setMutationError(null)
-            }}
-            error={mutationError}
-          />
+        {!isCreating && !isDetailLoading && detailError === null && selectedBug === null && (
+          <BugDetail bug={null} />
         )}
+        {!isCreating &&
+          !isDetailLoading &&
+          detailError === null &&
+          selectedBug !== null &&
+          detailMode === 'view' && (
+            <>
+              <BugDetail bug={selectedBug} />
+              {mutationError !== null && <ErrorMessage message={mutationError} />}
+              <div className={styles.detailActions}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDetailMode('edit')
+                    setMutationError(null)
+                  }}
+                >
+                  編集
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void handleDelete()
+                  }}
+                >
+                  削除
+                </button>
+              </div>
+            </>
+          )}
+        {!isCreating &&
+          !isDetailLoading &&
+          detailError === null &&
+          selectedBug !== null &&
+          detailMode === 'edit' && (
+            <BugForm
+              mode="edit"
+              initialValues={selectedBug}
+              onSubmit={(input) => {
+                void handleUpdate(input)
+              }}
+              onCancel={() => {
+                setDetailMode('view')
+                setMutationError(null)
+              }}
+              error={mutationError}
+            />
+          )}
       </section>
     </div>
   )
