@@ -44,12 +44,39 @@ final class InMemoryTaskRepository implements TaskRepositoryInterface
      */
     public function allTopLevelWithChildren(): array
     {
-        return array_values(array_filter($this->tasks, fn (Task $task) => $task->parentTaskId === null));
+        $topLevel = array_filter($this->tasks, fn (Task $task) => $task->parentTaskId === null);
+
+        return array_values(array_map($this->withChildren(...), $topLevel));
     }
 
     public function findByIdWithChildren(int $id): ?Task
     {
-        return $this->findById($id);
+        $task = $this->findById($id);
+
+        return $task !== null ? $this->withChildren($task) : null;
+    }
+
+    // EloquentTaskRepositoryが`with('children')`で行う子タスクの読み込みを
+    // インメモリ版でも再現する(/code-review指摘: LSP違反の修正)。
+    private function withChildren(Task $task): Task
+    {
+        $children = array_values(
+            array_filter($this->tasks, fn (Task $candidate) => $candidate->parentTaskId === $task->id)
+        );
+
+        return new Task(
+            id: $task->id,
+            parentTaskId: $task->parentTaskId,
+            title: $task->title,
+            description: $task->description,
+            status: $task->status,
+            priority: $task->priority,
+            dueDate: $task->dueDate,
+            definitionOfDone: $task->definitionOfDone,
+            estimatedEffort: $task->estimatedEffort,
+            actualEffort: $task->actualEffort,
+            children: $children,
+        );
     }
 
     /**
