@@ -1,0 +1,19 @@
+.nav {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border, #d0d7de);
+}
+
+.navButton {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.navButtonActive {
+  background-color: #dbe9ff;
+  font-weight: bold;
+}

@@ -1,0 +1,23 @@
+.page {
+  padding: 1rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--border, #d0d7de);
+  padding: 0.4rem 0.8rem;
+  text-align: right;
+}
+
+.table th {
+  text-align: left;
+  font-weight: bold;
+}
