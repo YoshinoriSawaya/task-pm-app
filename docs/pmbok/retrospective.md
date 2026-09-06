@@ -61,7 +61,20 @@
 - `/code-review`は「実装が終わってから念のため」ではなく、実際にバグを捕まえる実効性のあるステップだと確認できた。今後のフェーズでも欠かさず実施する
 
 ## フェーズ4: フロントエンド実装([#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22))
-_(未実施)_
+
+### うまくいったこと
+- フェーズ3完了時点でCPI=0.5が判明したことを受け、着手前にMust(MVP)/Should(#47〜#49)を仕分けたことで、Task画面(#18, #19)+静的解析(#20, #21)というMust範囲に集中でき、スコープが肥大化しなかった([change-log.md](change-log.md) C12)
+- api(taskApiClient) → hooks(useTasks/useTask、{data,error,isLoading}の統一インターフェース) → components(TaskList/TaskDetail/TaskForm/TaskPage)の順でRed→Green→Refactorを積み上げたことで、バックエンドと同様に手戻りがほぼなかった
+- `/code-review`で、自分自身が直前に修正したCIバグ(C13)自体に検証不足があることを発見できた(C14)。「修正した」で終わらせず、修正の効果を実際に再現条件で検証する重要性を再確認できた
+
+### 課題
+- ts-jestとVite(`import.meta.env`)の組み合わせで、CommonJS変換・JSX・jest-domの型解決に必要な設定がいずれも初期状態では欠けており、テストを書き進める過程で都度発覚した(tsconfig.test.json/tsconfig.jest.jsonの新設に至るまで複数回の手戻りが発生)
+- CIの型チェックステップ(`tsc --noEmit`)が、ルートのreferences専用tsconfigに対しては実質何もチェックしていない(常に成功する)という、バックエンドのCI起動漏れ(C5)と同種のバグが再度見つかった。`tsc -b`への修正自体も一度は不完全だった(C13→C14)
+
+### 教訓(Lessons Learned)
+- Vite+Jest構成では`import.meta.env`がテスト実行系(ts-jest)と静的型チェック系(tsc -b)で要求するmodule設定が競合しやすい。両者の責務を最初から別々のtsconfigに分離する前提で設計すべきだった(後から気づいて分離すると手戻りが発生する)
+- 「CIのステップが空振りしている」系のバグ(C5, C13, C14)は今回のプロジェクトで3回発生している。CIステップを追加・変更した際は、そのステップが実際に失敗しうることを一度は意図的に確認する(わざとエラーを混ぜてCIが落ちることを見る)運用を今後は徹底する
+- MVP/Should仕分け(C12)は実際に効果があった。時間逼迫が見えた時点で「何を削るか」を先に決めてから実装に入ると、実装中の判断コストが下がる
 
 ## フェーズ5: 統合・E2Eテスト([#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25))
 _(未実施)_
