@@ -43,6 +43,16 @@
 - 静的解析を導入する(バックエンド: PHPStan、フロントエンド: ESLint strict + TypeScript strict)。具体的な規約・命名規則・厳格度は[docs/development/coding-standards.md](docs/development/coding-standards.md)を参照
 - コミットは1コミット1意図を意識する
 
+## 運用上の教訓(プロジェクトを通じて得た、汎用性の高い運用ルール)
+
+特定フェーズの経緯ではなく、次回以降も通用する一般化されたルールのみをここに記す
+(詳細な経緯は[docs/pmbok/change-log.md](docs/pmbok/change-log.md)・[docs/pmbok/retrospective.md](docs/pmbok/retrospective.md)参照)。
+
+- **CIステップを追加・変更したら、意図的に失敗させて実際に検知できることを確認してから完了とする**。「チェックを追加したつもりが実は何も検査しておらず常に成功していた」という同型のバグを3回繰り返した(change-log.md C5, C13, C14)。TDDのRed→Greenと同じ発想をCI設定自体にも適用する
+- **金額セーフティのためにクラウドのIAM権限を最小化する際も、障害調査に必要な最小限の読み取り専用権限(監視・メトリクス取得系)は最初から含めておく**。権限を絞りすぎた結果、実際に発生した障害(EC2のSSH無応答)の真因を確認する手段が無くなった(change-log.md C23)
+- **秘密情報(APIキー・パスワード等)を扱う操作は、対象環境でユーザー自身に直接実行してもらう**。チャット上でのコピー&ペーストは、たとえ意図せずでも会話ログに秘密情報を残してしまう。発覚した場合は該当の秘密情報を即座にローテーションする
+- **「CLIコマンドでは動くが実際のサーバープロセスでは動かない」種類の不整合は、本番相当の起動経路・環境変数値で実際にリクエストを送るまで発見できないことがある**。自動テストのカバレッジをどれだけ高めても、探索的な手動確認と本番相当構成でのスモークテストでしか見つからない欠陥のクラスが存在する(change-log.md C18, C23)
+
 ## PMBOK成果物の置き場所(`docs/pmbok/`)
 
 - `project-charter.md` / `wbs.md` / `schedule.md` / `risk-register.md` / `change-log.md` / `retrospective.md`
