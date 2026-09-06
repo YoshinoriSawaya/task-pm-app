@@ -19,7 +19,8 @@ services:
       - ./backend:/var/www/html
     working_dir: /var/www/html
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_DATABASE: task_pm_app
@@ -51,6 +52,15 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./docker/mysql-init:/docker-entrypoint-initdb.d
+    # depends_onはコンテナの起動開始しか待たず、MySQL自体が接続を受け付ける
+    # 準備ができているかは見ない。CIのようにイメージpull直後で起動が遅い環境だと
+    # backendのmigrateが接続拒否で失敗しうるため、実際に接続可能になるまで
+    # ヘルスチェックで待つ(change-log.md C16)
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
 volumes:
   db_data:
