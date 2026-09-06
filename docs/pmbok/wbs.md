@@ -16,7 +16,7 @@
 | 1 | 設計 | 完了 | [#9](https://github.com/YoshinoriSawaya/task-pm-app/issues/9)(内訳: [#5](https://github.com/YoshinoriSawaya/task-pm-app/issues/5)〜[#8](https://github.com/YoshinoriSawaya/task-pm-app/issues/8) + 拡張分[#41](https://github.com/YoshinoriSawaya/task-pm-app/issues/41)〜[#43](https://github.com/YoshinoriSawaya/task-pm-app/issues/43)) |
 | 2 | 環境構築確認 | 完了 | [#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12) |
 | 3 | バックエンド実装 | 完了 | [#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17) |
-| 4 | フロントエンド実装 | 完了(Must分。Should分の#47〜#49はMVP後の追加として保留) | [#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22) |
+| 4 | フロントエンド実装 | 完了(Must分・Should分#47〜#49とも完了。change-log.md C19) | [#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22) |
 | 5 | 統合・E2Eテスト | 完了 | [#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25) |
 | 6 | リファクタリング・設計比較 | 完了 | [#29](https://github.com/YoshinoriSawaya/task-pm-app/issues/29) |
 | 7 | デプロイ | 未着手 | [#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34) |
