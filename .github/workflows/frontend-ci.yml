@@ -21,5 +21,8 @@ jobs:
       - run: npm install
       - run: npx prettier --check .
       - run: npm run lint
-      - run: npx tsc --noEmit
+      # ルートのtsconfig.json(references専用、filesは空)を対象にすると
+      # 実質チェック対象0件で常に成功してしまうため、--build(-b)で
+      # tsconfig.app.json/tsconfig.node.json/tsconfig.test.jsonを実際に辿らせる
+      - run: npx tsc -b
       - run: npm test

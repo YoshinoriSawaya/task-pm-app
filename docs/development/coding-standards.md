@@ -95,7 +95,7 @@
 ## CI(GitHub Actions)
 - トリガーは**`push`(mainブランチ)**。本プロジェクトはPRフローを取らないため、`pull_request`トリガーでは静的解析・テストが一度も実行されない。かつてワークフロー初期スキャフォールドが`pull_request`トリガーのままになっていたため、Git規約(下記)確定時に`push`へ修正した([change-log.md](../pmbok/change-log.md) C5)
 - `backend-ci.yml`: Pint(フォーマットチェック、`--test`)→ PHPStan(静的解析)→ Pest(テスト)の順に実行
-- `frontend-ci.yml`: Prettier(フォーマットチェック)→ ESLint → `tsc --noEmit`(型チェック)→ Jest(テスト)の順に実行
+- `frontend-ci.yml`: Prettier(フォーマットチェック)→ ESLint → `tsc -b`(型チェック。ルートの`tsconfig.json`はreferences専用で`files`が空のため`tsc --noEmit`単体では何もチェックせず常に成功してしまう。`-b`でtsconfig.app.json/tsconfig.node.json/tsconfig.test.jsonを実際に辿らせる、[change-log.md](../pmbok/change-log.md) C13)→ Jest(テスト)の順に実行
 
 ## Git規約
 - コミットメッセージは[Conventional Commits](https://www.conventionalcommits.org/)形式(`feat:` `fix:` `docs:` `refactor:` `test:` `chore:`)を採用する。これまでの`docs:`プレフィックス運用の実績とも整合させる
