@@ -3,6 +3,9 @@ vendor/
 .env
 frontend/dist/
 
+# nginxのBasic認証パスワードファイル(デプロイ時にEC2上で生成、change-log.md参照)
+docker/nginx/.htpasswd
+
 # Claude Code session-local state(スケジュールタスクのロックファイル等)
 .claude/
 

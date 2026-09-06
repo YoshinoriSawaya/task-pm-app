@@ -12,7 +12,7 @@
 
 - インスタンスタイプ: `t3.micro`(東京リージョン、オンデマンドで概算1〜2円/時間程度)。デモに必要な数時間の稼働であれば2000円予算に対して十分な余裕がある
 - ネットワーク: パブリックサブネットにEC2を1台配置し、セキュリティグループでHTTP(S)ポートのみ許可
-- アクセス制限: [ADR-0002](0002-evm-progress-and-bug-tracking.md)より前に確定済みの通り、インフラ層のBasic認証(nginx等のリバースプロキシ経由)で保護する
+- アクセス制限: [ADR-0002](0002-evm-progress-and-bug-tracking.md)より前に確定済みの通り、インフラ層のBasic認証(nginx等のリバースプロキシ経由)で保護する。実装は[docker-compose.prod.yml](../../docker-compose.prod.yml)に`nginx`サービスを追加し、[docker/nginx/default.conf](../../docker/nginx/default.conf)でBasic認証・リバースプロキシ設定を行う形にした(`.htpasswd`はリポジトリにコミットせず、デプロイ時にEC2上で生成)。frontend・backendを同一オリジン(nginxのport 80)で配信することで、CORSも実質不要になる副次効果がある(`FRONTEND_URL`環境変数によるCORS許可はローカル開発向けの構成として残す)
 - 起動コマンド: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`(下記「本番用環境変数の上書き」参照)
 - 運用: 動作確認が終わったら**インスタンスごと即座に削除**する([risk-register.md](../pmbok/risk-register.md) R2の対応策)
 

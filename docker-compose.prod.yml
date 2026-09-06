@@ -15,11 +15,32 @@
 # "secret"のまま本番公開してしまう事故を防ぐ。実際の値はEC2構築時(#30)に
 # リポジトリ直下の.env(git管理外)へ設定する。
 services:
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/.htpasswd:/etc/nginx/.htpasswd:ro
+    depends_on:
+      - backend
+      - frontend
+
   backend:
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
       DB_PASSWORD: ${PROD_DB_PASSWORD:?PROD_DB_PASSWORDが未設定です(リポジトリ直下の.envに設定してください)}
+    # 本番ではnginx(port 80)経由のみでアクセスさせ、8000をホストへ直接公開しない
+    ports: !reset []
+
+  frontend:
+    environment:
+      # nginxが同一オリジン(port 80)でフロント・バックエンドを配信するため、
+      # 相対パスにすることでCORSが実質不要になる(docker/nginx/default.conf参照)
+      VITE_API_BASE_URL: /api
+    # 本番ではnginx(port 80)経由のみでアクセスさせ、5173をホストへ直接公開しない
+    ports: !reset []
 
   db:
     environment:
