@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.test.json",
+  "compilerOptions": {
+    // ts-jestはCommonJSへ変換してNode(Jest)上で実行するため、tsconfig.test.json
+    // (tsc -b/ESLintの型チェック用。ソースのesnext構文をそのまま検証する)とは別に、
+    // 実行時変換専用の設定をここに分離する。tsc -bのreferencesには含めない
+    "module": "commonjs",
+    "moduleResolution": "node10",
+    "verbatimModuleSyntax": false
+  }
+}

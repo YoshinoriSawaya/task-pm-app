@@ -11,6 +11,6 @@ module.exports = {
   transform: {
     // ルートのtsconfig.json(references専用で空)しか自動参照されないため、
     // テスト専用のtsconfig.test.json(jest/jest-domの型を含む)を明示的に指定する
-    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.jest.json' }],
   },
 }
