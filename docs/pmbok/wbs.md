@@ -45,6 +45,7 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 - [#54](https://github.com/YoshinoriSawaya/task-pm-app/issues/54) デモ用シーダー作成(change-log.md C6)
 
 ### 4. フロントエンド実装 ([#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22))
+**Must(MVP)。#47〜#49はShouldとして本フェーズの後回しにする(change-log.md C12)**
 - [#18](https://github.com/YoshinoriSawaya/task-pm-app/issues/18) タスク一覧・詳細画面実装
 - [#19](https://github.com/YoshinoriSawaya/task-pm-app/issues/19) タスク作成・編集フォーム実装
 - [#20](https://github.com/YoshinoriSawaya/task-pm-app/issues/20) フロントエンドユニットテスト(Jest)実装
@@ -86,10 +87,10 @@ ER図・API設計を含む、実装着手前の設計一式を確定する。
 
 - 設計フェーズ([#9](https://github.com/YoshinoriSawaya/task-pm-app/issues/9)): [#41](https://github.com/YoshinoriSawaya/task-pm-app/issues/41) ADR-0002作成 / [#42](https://github.com/YoshinoriSawaya/task-pm-app/issues/42) ER図・API設計・レイヤー構成図の更新 / [#43](https://github.com/YoshinoriSawaya/task-pm-app/issues/43) client-requirements.md改訂(いずれも完了)
 - バックエンド実装フェーズ([#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17)): [#44](https://github.com/YoshinoriSawaya/task-pm-app/issues/44) マイグレーション追加 / [#45](https://github.com/YoshinoriSawaya/task-pm-app/issues/45) Bugスライス実装 / [#46](https://github.com/YoshinoriSawaya/task-pm-app/issues/46) Progressスライス実装
-- フロントエンド実装フェーズ([#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22)): [#47](https://github.com/YoshinoriSawaya/task-pm-app/issues/47) タスクフォームへの工数入力欄追加 / [#48](https://github.com/YoshinoriSawaya/task-pm-app/issues/48) バグ管理画面 / [#49](https://github.com/YoshinoriSawaya/task-pm-app/issues/49) 進捗ダッシュボード画面
+- フロントエンド実装フェーズ([#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22)): [#47](https://github.com/YoshinoriSawaya/task-pm-app/issues/47) タスクフォームへの工数入力欄追加 / [#48](https://github.com/YoshinoriSawaya/task-pm-app/issues/48) バグ管理画面 / [#49](https://github.com/YoshinoriSawaya/task-pm-app/issues/49) 進捗ダッシュボード画面 **(3件ともShould。change-log.md C12によりMVP完成後の余剰時間で着手する)**
 - 統合・E2Eテストフェーズ([#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25)): [#50](https://github.com/YoshinoriSawaya/task-pm-app/issues/50) EVM計算ロジックの境界値ユニットテスト
 
-[risk-register.md](risk-register.md) R1の通り、このスコープ拡張は16時間予算に対するスケジュールリスクを承知の上で追加したもの。時間逼迫時は`Progress`スライスのUI装飾等、周辺部分から優先的に削る。
+[risk-register.md](risk-register.md) R1の通り、このスコープ拡張は16時間予算に対するスケジュールリスクを承知の上で追加したもの。フェーズ3完了時点でCPI=0.5が実測されたことを受け、時間逼迫時に周辺部分から削るという方針を実際のMust/Should仕分けとして確定させた(change-log.md C12)。
 
 ## 変更履歴: PMレビューで発見した見落とし(change-log.md C6, C7)
 
