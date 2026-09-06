@@ -79,6 +79,14 @@
 - APIクライアントを呼ぶカスタムフックは`{ data, error, isLoading }`の形を返す統一インターフェースとする
 - `error`がある場合は、トースト等の通知ライブラリは導入せず、フォーム・一覧の近くにインラインで`<ErrorMessage>`コンポーネントを表示する(依存を増やさない方針、コーディング規約全体の一貫性)
 
+## E2Eテスト
+
+- **Playwright**を採用する(client-requirements.mdのDoD「タスクCRUDの主要フローを対象にE2Eテストを自動化する」に対応)。理由: TypeScript製フロントエンドとの親和性、単一プロセスでのマルチブラウザ実行、CI(GitHub Actions)との統合実績いずれも現時点で最も一般的であり、「一般的であること」自体を選定理由として明文化する方針(CLAUDE.md非機能要件)と合致する。Cypressは有償のCI並列実行やElectron依存など、この規模のプロジェクトには過剰
+- 配置場所はリポジトリ直下の`e2e/`(専用の`package.json`を持つ独立したNodeプロジェクト)とし、`frontend/`配下には置かない。`frontend`のdocker-composeサービスは`./frontend:/app`をbind mountしてコンテナ内(node:20-**alpine**、musl libc)で`npm install`を行うため、同じディレクトリをホスト側(CI実行環境やこのマシン、いずれもglibc)からもnpm installするとesbuild等のプラットフォーム別バイナリが競合しうる。E2Eは元々フロント・バックエンドどちらにも属さない横断的なテストであるため、依存関係を完全に分離した専用ディレクトリに置くことでこの問題を避ける
+- 対象は「タスクCRUDの主要フロー」(作成→一覧反映→編集→削除)のみ。細かいバリデーションパターン等はユニット/Featureテストの責務とし、E2Eで重複検証しない(実行時間・保守コストとのバランス)
+- 実行前提として`docker compose up`でfrontend/backend/dbが起動していることを前提とする(Playwrightの`webServer`によるサーバー自動起動は行わない。DBを含むフルスタックの起動はdocker-composeに一元化するため)
+- CI(`e2e-ci.yml`)では、`docker compose up -d`でスタックを起動→ヘルスチェック→Playwright実行→`docker compose down`の順で実行する
+
 ## バックエンド/フロントエンド間の連携
 
 ### CORS

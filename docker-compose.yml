@@ -26,6 +26,10 @@ services:
       DB_USERNAME: task_pm_app
       DB_PASSWORD: secret
       FRONTEND_URL: http://localhost:5173
+      # php artisan serveはデフォルトでは1リクエストずつ直列処理してしまい、
+      # ブラウザからの複数同時リクエスト(React StrictModeの二重effect等)で
+      # 顕著な待ち時間が発生する。PHP組み込みサーバーの並列ワーカー機能で緩和する
+      PHP_CLI_SERVER_WORKERS: "4"
     command: >
       sh -c "
         [ -f .env ] || cp .env.example .env &&

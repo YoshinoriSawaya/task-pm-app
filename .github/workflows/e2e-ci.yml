@@ -1,0 +1,67 @@
+name: e2e-ci
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - "e2e/**"
+      - "docker-compose.yml"
+      - ".github/workflows/e2e-ci.yml"
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: docker composeでfrontend/backend/dbを起動
+        run: docker compose up -d --build
+
+      - name: バックエンドの起動を待つ
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/ && exit 0
+            sleep 2
+          done
+          echo "backend did not become ready in time" >&2
+          exit 1
+
+      - name: フロントエンドの起動を待つ
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5173/ && exit 0
+            sleep 2
+          done
+          echo "frontend did not become ready in time" >&2
+          exit 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - working-directory: e2e
+        run: npm install
+
+      - working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - working-directory: e2e
+        run: npx playwright test
+
+      - name: 失敗時にdocker composeのログを出力
+        if: failure()
+        run: docker compose logs
+
+      - name: 失敗時にPlaywrightレポートを保存
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 7
+
+      - name: docker composeを停止
+        if: always()
+        run: docker compose down -v
