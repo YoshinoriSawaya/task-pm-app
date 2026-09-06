@@ -93,6 +93,7 @@ describe('taskApiClient', () => {
     it('POST /tasks を呼び出し、作成されたタスクを返す', async () => {
       // Arrange
       const input: CreateTaskInput = {
+        parent_task_id: null,
         title: '要件定義',
         description: null,
         priority: 'high',
@@ -125,6 +126,7 @@ describe('taskApiClient', () => {
     it('バリデーションエラー(422)の場合、messageを含むErrorを投げる', async () => {
       // Arrange
       const input: CreateTaskInput = {
+        parent_task_id: null,
         title: '',
         description: null,
         priority: 'high',

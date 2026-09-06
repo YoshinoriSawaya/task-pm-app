@@ -42,7 +42,7 @@ describe('TaskForm(作成モード)', () => {
     expect(handleSubmit).not.toHaveBeenCalled()
   })
 
-  it('必須項目を入力して送信するとCreateTaskInputの形でonSubmitが呼ばれる', () => {
+  it('必須項目を入力して送信するとCreateTaskInputの形でonSubmitが呼ばれる(parent_task_idはnull)', () => {
     // Arrange
     const handleSubmit = jest.fn()
     render(<TaskForm mode="create" onSubmit={handleSubmit} />)
@@ -54,12 +54,44 @@ describe('TaskForm(作成モード)', () => {
 
     // Assert
     const expected: CreateTaskInput = {
+      parent_task_id: null,
       title: '要件定義',
       description: null,
       priority: 'medium',
       due_date: null,
       definition_of_done: null,
       estimated_effort: 4,
+    }
+    expect(handleSubmit).toHaveBeenCalledWith(expected)
+  })
+
+  it('親タスクの選択肢が無い場合、親タスクフィールドを表示しない', () => {
+    // Arrange & Act
+    render(<TaskForm mode="create" onSubmit={jest.fn()} parentTaskOptions={[]} />)
+
+    // Assert
+    expect(screen.queryByLabelText('親タスク')).not.toBeInTheDocument()
+  })
+
+  it('親タスクの選択肢がある場合、選択して送信するとparent_task_idを含むCreateTaskInputでonSubmitが呼ばれる', () => {
+    // Arrange
+    const handleSubmit = jest.fn()
+    render(<TaskForm mode="create" onSubmit={handleSubmit} parentTaskOptions={[existingTask]} />)
+
+    // Act
+    fireEvent.change(screen.getByLabelText('タイトル'), { target: { value: 'スコープ確定' } })
+    fireEvent.change(screen.getByLabelText('親タスク'), { target: { value: '1' } })
+    fireEvent.click(screen.getByRole('button', { name: '作成' }))
+
+    // Assert
+    const expected: CreateTaskInput = {
+      parent_task_id: 1,
+      title: 'スコープ確定',
+      description: null,
+      priority: 'medium',
+      due_date: null,
+      definition_of_done: null,
+      estimated_effort: null,
     }
     expect(handleSubmit).toHaveBeenCalledWith(expected)
   })

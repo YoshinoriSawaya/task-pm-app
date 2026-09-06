@@ -9,6 +9,10 @@ interface CreateModeProps {
   onSubmit: (input: CreateTaskInput) => void
   onCancel?: () => void
   error?: string | null
+  // 子タスクとして作成する場合に選択できる親タスクの候補(トップレベルタスクのみ、
+  // 2階層制約により子タスク自身はさらに子を持てないため)。api-design.mdの通り、
+  // parent_task_idは作成時にのみ指定可能
+  parentTaskOptions?: Task[]
 }
 
 interface EditModeProps {
@@ -31,7 +35,9 @@ function toNullableNumber(value: string): number | null {
 
 export function TaskForm(props: TaskFormProps): React.JSX.Element {
   const { mode, initialValues, onSubmit, onCancel, error } = props
+  const parentTaskOptions = mode === 'create' ? (props.parentTaskOptions ?? []) : []
 
+  const [parentTaskId, setParentTaskId] = useState('')
   const [title, setTitle] = useState(initialValues?.title ?? '')
   const [description, setDescription] = useState(initialValues?.description ?? '')
   const [priority, setPriority] = useState<TaskPriority>(initialValues?.priority ?? 'medium')
@@ -61,6 +67,7 @@ export function TaskForm(props: TaskFormProps): React.JSX.Element {
 
     if (mode === 'create') {
       const input: CreateTaskInput = {
+        parent_task_id: parentTaskId === '' ? null : Number(parentTaskId),
         title,
         description: toNullableString(description),
         priority,
@@ -88,6 +95,26 @@ export function TaskForm(props: TaskFormProps): React.JSX.Element {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       {error !== null && error !== undefined && <ErrorMessage message={error} />}
+
+      {mode === 'create' && parentTaskOptions.length > 0 && (
+        <div className={styles.field}>
+          <label htmlFor="task-parent">親タスク</label>
+          <select
+            id="task-parent"
+            value={parentTaskId}
+            onChange={(e) => {
+              setParentTaskId(e.target.value)
+            }}
+          >
+            <option value="">なし(トップレベルタスクとして作成)</option>
+            {parentTaskOptions.map((task) => (
+              <option key={task.id} value={task.id}>
+                {task.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className={styles.field}>
         <label htmlFor="task-title">タイトル</label>

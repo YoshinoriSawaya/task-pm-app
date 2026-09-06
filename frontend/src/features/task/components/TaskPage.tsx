@@ -98,6 +98,7 @@ export function TaskPage(): React.JSX.Element {
               setMutationError(null)
             }}
             error={mutationError}
+            parentTaskOptions={tasks ?? []}
           />
         )}
         {!isCreating && detailError !== null && <ErrorMessage message={detailError} />}

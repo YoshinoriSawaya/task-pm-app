@@ -22,6 +22,7 @@ export interface Task {
 
 // POST /api/tasks のリクエストボディ。statusはドメイン不変条件により指定不可(常にnot_startedから開始)
 export interface CreateTaskInput {
+  parent_task_id: number | null
   title: string
   description: string | null
   priority: TaskPriority
