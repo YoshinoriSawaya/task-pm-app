@@ -42,6 +42,7 @@ services:
         sed -i \"s#^DB_DATABASE=.*#DB_DATABASE=$$DB_DATABASE#\" .env &&
         sed -i \"s#^DB_USERNAME=.*#DB_USERNAME=$$DB_USERNAME#\" .env &&
         sed -i \"s#^DB_PASSWORD=.*#DB_PASSWORD=$$DB_PASSWORD#\" .env &&
+        sed -i \"s#^FRONTEND_URL=.*#FRONTEND_URL=$$FRONTEND_URL#\" .env &&
         composer install &&
         php artisan key:generate --ansi --force &&
         php artisan migrate --force &&
