@@ -1,6 +1,6 @@
 name: backend-ci
 
-on:
+"on":
   push:
     branches: [main]
     paths:

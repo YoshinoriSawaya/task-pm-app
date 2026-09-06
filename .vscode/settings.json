@@ -1,0 +1,7 @@
+{
+  // VSCode組み込みのPHP構文チェック(php.validate.*)はデフォルトでPATH上のphpを使うが、
+  // このマシンのシステムPHPはXAMPP付属の8.0.3(readonly等PHP8.1+構文を認識できず、
+  // 誤って構文エラーとして報告する)。実際にプロジェクトが使うPHP 8.3を明示的に指定する
+  // (docs/development/coding-standards.md「ローカル開発環境(このマシン固有のメモ)」参照)
+  "php.validate.executablePath": "C:\\Users\\PC_User\\tools\\php83\\php.exe"
+}

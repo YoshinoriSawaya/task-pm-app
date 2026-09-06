@@ -1,6 +1,6 @@
 name: frontend-ci
 
-on:
+"on":
   push:
     branches: [main]
     paths:

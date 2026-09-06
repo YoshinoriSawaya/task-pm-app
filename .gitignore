@@ -3,6 +3,9 @@ vendor/
 .env
 frontend/dist/
 
+# Claude Code session-local state(スケジュールタスクのロックファイル等)
+.claude/
+
 # backend/storage/・backend/bootstrap/cache/ 配下は、Laravel自身が置く
 # 入れ子の.gitignore(ディレクトリ構造は残しつつ生成物だけ無視するパターン)に任せる。
 # ここでまとめて無視すると、その入れ子.gitignore自体が追跡されず
