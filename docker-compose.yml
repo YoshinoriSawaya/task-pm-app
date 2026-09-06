@@ -55,12 +55,29 @@ services:
     # depends_onはコンテナの起動開始しか待たず、MySQL自体が接続を受け付ける
     # 準備ができているかは見ない。CIのようにイメージpull直後で起動が遅い環境だと
     # backendのmigrateが接続拒否で失敗しうるため、実際に接続可能になるまで
-    # ヘルスチェックで待つ(change-log.md C16)
+    # ヘルスチェックで待つ(change-log.md C16)。
+    # 公式MySQLイメージは初期化中、`--skip-networking`(TCP未リッスン)の一時
+    # サーバーをUnixソケット経由でのみ起動する。mysqladminは`-h localhost`
+    # 指定時にソケット接続を優先するため、`-h localhost`のままだとこの一時
+    # サーバーに対しても誤って「healthy」と判定しかねない(/code-review指摘)。
+    # `127.0.0.1`+`--protocol=tcp`で明示的にTCP接続を強制し、本当にbackendが
+    # 接続する経路(DB_HOST=db、TCP)の疎通を確認する
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "--protocol=tcp",
+          "-u",
+          "root",
+          "-proot",
+        ]
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 30
 
 volumes:
   db_data:
