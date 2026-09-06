@@ -17,7 +17,7 @@
 | 2 | 環境構築確認 | 完了 | [#12](https://github.com/YoshinoriSawaya/task-pm-app/issues/12) |
 | 3 | バックエンド実装 | 完了 | [#17](https://github.com/YoshinoriSawaya/task-pm-app/issues/17) |
 | 4 | フロントエンド実装 | 完了(Must分。Should分の#47〜#49はMVP後の追加として保留) | [#22](https://github.com/YoshinoriSawaya/task-pm-app/issues/22) |
-| 5 | 統合・E2Eテスト | 未着手 | [#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25) |
+| 5 | 統合・E2Eテスト | 完了 | [#25](https://github.com/YoshinoriSawaya/task-pm-app/issues/25) |
 | 6 | リファクタリング・設計比較 | 未着手 | [#29](https://github.com/YoshinoriSawaya/task-pm-app/issues/29) |
 | 7 | デプロイ | 未着手 | [#34](https://github.com/YoshinoriSawaya/task-pm-app/issues/34) |
 | 8 | PMBOKドキュメント整備・振り返り | 未着手 | [#40](https://github.com/YoshinoriSawaya/task-pm-app/issues/40) |
