@@ -8,12 +8,24 @@
 
 ## Decision(決定)
 
-**EC2インスタンス1台(`t3.micro`程度)の上で、ローカルと同じ`docker-compose`構成(frontend/backend/mysql)をそのまま起動する。** RDSは使わず、MySQLもEC2上のコンテナとして動かす。
+**EC2インスタンス1台(`t3.micro`程度)の上で、ローカルと同じ`docker-compose.yml`をベースに、本番専用の上書きファイル`docker-compose.prod.yml`を重ねて起動する。** RDSは使わず、MySQLもEC2上のコンテナとして動かす。
 
 - インスタンスタイプ: `t3.micro`(東京リージョン、オンデマンドで概算1〜2円/時間程度)。デモに必要な数時間の稼働であれば2000円予算に対して十分な余裕がある
 - ネットワーク: パブリックサブネットにEC2を1台配置し、セキュリティグループでHTTP(S)ポートのみ許可
 - アクセス制限: [ADR-0002](0002-evm-progress-and-bug-tracking.md)より前に確定済みの通り、インフラ層のBasic認証(nginx等のリバースプロキシ経由)で保護する
+- 起動コマンド: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`(下記「本番用環境変数の上書き」参照)
 - 運用: 動作確認が終わったら**インスタンスごと即座に削除**する([risk-register.md](../pmbok/risk-register.md) R2の対応策)
+
+### 本番用環境変数の上書き([docker-compose.prod.yml](../../docker-compose.prod.yml))
+
+デプロイ前security-review([docs/pmbok/change-log.md](../pmbok/change-log.md) C22)で、当初案(`docker-compose.yml`をローカルと完全に同一のまま本番でも起動する)の欠陥を発見した。`backend`のcommandは`.env`が存在しない場合`backend/.env.example`へフォールバックするが、これはローカル開発向けに`APP_DEBUG=true`・`DB_PASSWORD=secret`を決め打ちしており、本番でこのフォールバックが発火すると未処理例外時にLaravelのデバッグ画面からDB_PASSWORD・APP_KEY等がそのまま漏えいする経路が生まれる。
+
+対策として`docker-compose.prod.yml`を新設し、以下を明示的に上書きする(Composeの`environment:`はコンテナ内`.env`ファイルより優先されるため、本番用`.env`の用意を忘れていた場合でも安全側に倒れる):
+- `APP_ENV=production` / `APP_DEBUG=false`
+- `DB_PASSWORD` / `MYSQL_PASSWORD` / `MYSQL_ROOT_PASSWORD`: デフォルト値を持たせず、リポジトリ直下の(git管理外の)`.env`で`PROD_DB_PASSWORD`・`PROD_DB_ROOT_PASSWORD`が未設定なら起動自体を失敗させる(`${VAR:?message}`構文)。これにより"secret"のまま本番公開してしまう事故を防ぐ
+- `db`のポート公開(`3306:3306`)を`!reset []`で無効化し、DBをホストの外から到達不能にする(ローカルでは直接接続したいことがあるため`docker-compose.yml`側では公開を残す)
+
+実際の`PROD_DB_PASSWORD`・`PROD_DB_ROOT_PASSWORD`の値は[.env.example](../../.env.example)をコピーしてEC2構築時([#30](https://github.com/YoshinoriSawaya/task-pm-app/issues/30))に設定する。
 
 ## Alternatives Considered(検討した代替案)
 

@@ -1,0 +1,31 @@
+# 本番(EC2)専用の上書き設定。ADR-0003により、ローカル用docker-compose.ymlをベースに
+# 以下だけ上書きして起動する運用にする:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# 背景(デプロイ前security-review, change-log.md C22):
+# backendのcommand(docker-compose.yml)は`.env`が存在しない場合`.env.example`へ
+# フォールバックするが、.env.exampleはローカル開発向けに`APP_DEBUG=true`・
+# `DB_PASSWORD=secret`を決め打ちしている。ADR-0003は「ローカルと同じdocker-compose
+# 構成をそのまま起動する」と書いていたため、本番でこのフォールバックが発火すると
+# 未処理例外時にLaravelのデバッグ画面からDB_PASSWORD・APP_KEY等がそのまま漏える
+# 経路が生まれる。Composeの`environment:`はコンテナ内の.envファイルより優先される
+# ため、ここで安全な値を明示的に上書きすることで「本番用.envの用意を忘れていた」
+# 場合でも安全側に倒す。DB_PASSWORD等はデフォルト値を持たせず、リポジトリ直下の
+# (gitignore対象の).envで未設定なら起動自体を失敗させる(`${VAR:?message}`)ことで、
+# "secret"のまま本番公開してしまう事故を防ぐ。実際の値はEC2構築時(#30)に
+# リポジトリ直下の.env(git管理外)へ設定する。
+services:
+  backend:
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_PASSWORD: ${PROD_DB_PASSWORD:?PROD_DB_PASSWORDが未設定です(リポジトリ直下の.envに設定してください)}
+
+  db:
+    environment:
+      MYSQL_PASSWORD: ${PROD_DB_PASSWORD:?PROD_DB_PASSWORDが未設定です(リポジトリ直下の.envに設定してください)}
+      MYSQL_ROOT_PASSWORD: ${PROD_DB_ROOT_PASSWORD:?PROD_DB_ROOT_PASSWORDが未設定です(リポジトリ直下の.envに設定してください)}
+    # 本番ではホストの3306を外部公開しない(ADR-0003: セキュリティグループでHTTP(S)のみ許可の方針を
+    # docker-composeレベルでも徹底する。ローカルでは踏み台無しでdbに直接繋ぎたいことがあるため、
+    # ローカル用の設定(docker-compose.yml)ではポート公開を残している)
+    ports: !reset []
