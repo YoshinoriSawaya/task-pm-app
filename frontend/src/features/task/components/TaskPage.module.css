@@ -1,0 +1,14 @@
+.page {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.listSection {
+  flex: 1;
+  min-width: 16rem;
+}
+
+.detailSection {
+  flex: 2;
+}

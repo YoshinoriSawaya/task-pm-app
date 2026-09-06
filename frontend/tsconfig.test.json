@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
+    "types": ["vite/client", "node", "jest", "@testing-library/jest-dom"],
+    "noEmit": true,
+    // ts-jestはCommonJSへ変換して実行するため、ソースをesnextのimport/exportのまま
+    // 保持しようとするverbatimModuleSyntaxはテスト実行時には無効化する
+    "module": "commonjs",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/__mocks__/**/*.ts"],
+  "exclude": []
+}
