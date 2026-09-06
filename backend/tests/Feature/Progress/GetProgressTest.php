@@ -80,3 +80,54 @@ it('末端タスクの工数・ステータス・期限からEVM指標とバグ�
     expect($bugs['resolution_rate'])->toEqual(0.3333);
     expect($bugs['defect_density'])->toEqual(3.0);
 });
+
+// #50: EVM計算ロジックの境界値ユニットテスト(ADR-0002)
+
+it('実績工数が誰も記録されていない場合、AC=0としてCPIを1で扱う', function () {
+    // Arrange: 見積りのみのタスク(actual_effortは未記録のまま)
+    $this->postJson('/api/tasks', ['title' => 'A', 'estimated_effort' => 4]);
+    $this->postJson('/api/tasks', ['title' => 'B', 'estimated_effort' => 6]);
+
+    // Act
+    $response = $this->getJson('/api/progress');
+
+    // Assert
+    $evm = $response->json('evm');
+    expect($evm['ac'])->toEqual(0.0);
+    expect($evm['ev'])->toEqual(0.0); // 未着手のためdoneなし
+    expect($evm['cpi'])->toEqual(1.0); // AC=0のため「予定通り」扱い
+});
+
+it('期限が今日以前のタスクが無い場合、PV=0としてSPIを1で扱う', function () {
+    // Arrange: 期限は未来のみ(または未設定)のタスクを完了させる
+    $task = $this->postJson('/api/tasks', [
+        'title' => 'A',
+        'estimated_effort' => 4,
+        'due_date' => now()->addDays(10)->toDateString(),
+    ])->json();
+    $this->patchJson("/api/tasks/{$task['id']}", ['status' => 'done', 'actual_effort' => 4]);
+
+    // Act
+    $response = $this->getJson('/api/progress');
+
+    // Assert
+    $evm = $response->json('evm');
+    expect($evm['pv'])->toEqual(0.0);
+    expect($evm['ev'])->toEqual(4.0); // doneなのでEVは計上される
+    expect($evm['spi'])->toEqual(1.0); // PV=0のため「予定通り」扱い
+});
+
+it('完了済み末端タスクが0件の場合、バグが存在してもdefect_densityはnullになる', function () {
+    // Arrange: タスクは未完了のまま、バグのみ登録する
+    $this->postJson('/api/tasks', ['title' => 'A', 'estimated_effort' => 4]);
+    $this->postJson('/api/bugs', ['title' => 'バグ1', 'discovered_at' => now()->toDateString()]);
+
+    // Act
+    $response = $this->getJson('/api/progress');
+
+    // Assert
+    $bugs = $response->json('bugs');
+    expect($bugs['total'])->toEqual(1);
+    expect($bugs['resolution_rate'])->toEqual(0.0); // バグ自体は存在するのでnullにはならない
+    expect($bugs['defect_density'])->toBeNull(); // 完了済み末端タスクが0件のためnull
+});
